@@ -1,0 +1,36 @@
+group 'net.progruzovik.study'
+version '0.1.0'
+
+buildscript {
+    ext.kotlinVersion = '1.0.6'
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'kotlin'
+apply plugin: 'spring-boot'
+apply plugin: 'application'
+
+jar {
+    baseName = 'croco-api'
+    version = '0.1.0'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile("junit:junit")
+}
