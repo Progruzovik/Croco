@@ -2,20 +2,17 @@ package net.progruzovik.study.croco.api
 
 import net.progruzovik.study.croco.model.Player
 import net.progruzovik.study.croco.service.QueueService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpSession
 
 @RestController
 @RequestMapping("/api/player")
-class PlayerApi {
-
-    @Autowired lateinit var queueService: QueueService
+class PlayerApi(val queueService: QueueService) {
 
     @GetMapping("/status")
     fun getStatus(@SessionAttribute player: Player): Any {
         return object {
-            val status = player.status
+            val status = player.status.number
         }
     }
 

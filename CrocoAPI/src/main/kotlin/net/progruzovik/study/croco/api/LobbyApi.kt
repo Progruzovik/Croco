@@ -7,7 +7,6 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/lobby")
-@SessionAttributes("player")
 class LobbyApi {
 
     @GetMapping("/roles")

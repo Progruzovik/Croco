@@ -1,5 +1,6 @@
 package net.progruzovik.study.croco.service
 
+import net.progruzovik.study.croco.enum.Status
 import net.progruzovik.study.croco.model.Lobby
 import net.progruzovik.study.croco.model.Player
 import org.springframework.stereotype.Service
@@ -7,11 +8,13 @@ import java.util.*
 
 @Service
 class QueueService {
+
     private var queuedPlayers: MutableList<Player> = ArrayList()
 
     fun add(player: Player) {
         if (!queuedPlayers.contains(player)) {
             queuedPlayers.add(player)
+            player.status = Status.QUEUED
         }
     }
 
