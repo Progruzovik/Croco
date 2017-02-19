@@ -1,8 +1,8 @@
 package net.progruzovik.study.croco.api
 
-import net.progruzovik.study.croco.enum.Status
-import net.progruzovik.study.croco.model.Player
-import net.progruzovik.study.croco.service.QueueService
+import net.progruzovik.study.croco.enum.Role
+import net.progruzovik.study.croco.game.Player
+import net.progruzovik.study.croco.game.QueueService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
@@ -12,10 +12,10 @@ import javax.servlet.http.HttpSession
 @RequestMapping("/api/player")
 class PlayerApi(val queueService: QueueService) {
 
-    @GetMapping("/status")
-    fun getStatus(@SessionAttribute player: Player): Any {
+    @GetMapping("/role")
+    fun getRole(@SessionAttribute player: Player): Any {
         return object {
-            val statusCode = player.statusCode
+            val roleCode = player.roleCode
         }
     }
 
@@ -33,7 +33,7 @@ class PlayerApi(val queueService: QueueService) {
 
     @PostMapping("/queue")
     fun postQueue(response: HttpServletResponse, @SessionAttribute player: Player) {
-        val isOk: Boolean = (player.status == Status.IDLE || player.status == Status.WIN) && queueService.add(player)
+        val isOk: Boolean = (player.role == Role.IDLE || player.role == Role.WIN) && queueService.add(player)
         if (!isOk) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }

@@ -1,29 +1,25 @@
-package net.progruzovik.study.croco.service
+package net.progruzovik.study.croco.game
 
-import net.progruzovik.study.croco.enum.Status
-import net.progruzovik.study.croco.model.Lobby
-import net.progruzovik.study.croco.model.Player
+import net.progruzovik.study.croco.enum.Role
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
 class QueueService {
 
-    private val LOBBY_SIZE: Int = 1
-
     private var queuedPlayers: MutableSet<Player> = LinkedHashSet()
 
     fun add(player: Player): Boolean {
         if (queuedPlayers.add(player)) {
-            player.status = Status.QUEUED
-            if (queuedPlayers.size >= LOBBY_SIZE) {
-                val players: List<Player> = queuedPlayers.take(LOBBY_SIZE)
+            player.role = Role.QUEUED
+            if (queuedPlayers.size >= Lobby.SIZE) {
+                val players: List<Player> = queuedPlayers.take(Lobby.SIZE)
                 val lobby = Lobby(players)
                 players.forEach {
-                    it.status = Status.PLAY
+                    it.role = Role.PLAY
                     it.lobby = lobby
                 }
-                queuedPlayers = queuedPlayers.drop(LOBBY_SIZE).toMutableSet()
+                queuedPlayers = queuedPlayers.drop(Lobby.SIZE).toMutableSet()
             }
             return true
         }
@@ -32,7 +28,7 @@ class QueueService {
 
     fun remove(player: Player): Boolean {
         if (queuedPlayers.remove(player)) {
-            player.status = Status.IDLE
+            player.role = Role.IDLE
             return true
         }
         return false

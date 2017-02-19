@@ -1,6 +1,6 @@
 package net.progruzovik.study.croco.session
 
-import net.progruzovik.study.croco.model.Player
+import net.progruzovik.study.croco.game.Player
 import org.springframework.stereotype.Component
 import javax.servlet.http.HttpSession
 import javax.servlet.http.HttpSessionEvent
