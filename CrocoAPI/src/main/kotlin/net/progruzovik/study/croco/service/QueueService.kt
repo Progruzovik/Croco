@@ -9,19 +9,32 @@ import java.util.*
 @Service
 class QueueService {
 
-    private var queuedPlayers: MutableList<Player> = ArrayList()
+    private val LOBBY_SIZE: Int = 1
 
-    fun add(player: Player) {
-        if (!queuedPlayers.contains(player)) {
-            queuedPlayers.add(player)
+    private var queuedPlayers: MutableSet<Player> = LinkedHashSet()
+
+    fun add(player: Player): Boolean {
+        if (queuedPlayers.add(player)) {
             player.status = Status.QUEUED
+            if (queuedPlayers.size >= LOBBY_SIZE) {
+                val players: List<Player> = queuedPlayers.take(LOBBY_SIZE)
+                val lobby = Lobby(players)
+                players.forEach {
+                    it.status = Status.PLAY
+                    it.lobby = lobby
+                }
+                queuedPlayers = queuedPlayers.drop(LOBBY_SIZE).toMutableSet()
+            }
+            return true
         }
+        return false
     }
 
-    fun getLobby(): Lobby {
-        val result = Lobby()
-        result.players = queuedPlayers.take(3)
-        queuedPlayers = queuedPlayers.drop(3).toMutableList()
-        return result
+    fun remove(player: Player): Boolean {
+        if (queuedPlayers.remove(player)) {
+            player.status = Status.IDLE
+            return true
+        }
+        return false
     }
 }

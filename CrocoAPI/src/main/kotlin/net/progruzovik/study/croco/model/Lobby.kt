@@ -1,15 +1,11 @@
 package net.progruzovik.study.croco.model
 
-import net.progruzovik.study.croco.enum.Status
+import com.fasterxml.jackson.annotation.JsonIgnore
+import java.util.*
 
-class Lobby {
+data class Lobby(
+        @JsonIgnore val players: List<Player>) {
 
-    var players: List<Player>? = null
-    set(value) {
-        field = value
-        value?.forEach {
-            it.status = Status.PLAY
-            it.lobby = this
-        }
-    }
+    val messages: MutableList<Message> = ArrayList()
+    val quads: MutableList<Quad> = ArrayList()
 }
