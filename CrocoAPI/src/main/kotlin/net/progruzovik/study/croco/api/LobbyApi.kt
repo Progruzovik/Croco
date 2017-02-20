@@ -2,7 +2,6 @@ package net.progruzovik.study.croco.api
 
 import net.progruzovik.study.croco.enum.Role
 import net.progruzovik.study.croco.game.Lobby
-import net.progruzovik.study.croco.game.Message
 import net.progruzovik.study.croco.game.Player
 import net.progruzovik.study.croco.game.Quad
 import org.springframework.http.HttpStatus
@@ -33,10 +32,21 @@ class LobbyApi {
         return player.lobby
     }
 
+    @GetMapping("/keyword")
+    fun getKeyword(response: HttpServletResponse, @SessionAttribute player: Player): Any? {
+        if (player.role == Role.PLAYER || player.lobby == null) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            return null
+        }
+        return object {
+            val keyword = player.lobby?.keyword
+        }
+    }
+
     @PostMapping("/message")
-    fun postMessage(response: HttpServletResponse, @SessionAttribute player: Player, value: String) {
-        if (player.role == Role.PLAY) {
-            player.lobby?.addMessage(Message(player.name, value))
+    fun postMessage(response: HttpServletResponse, @SessionAttribute player: Player, text: String) {
+        if (player.role == Role.PLAYER) {
+            player.lobby?.addMessage(player, text)
         } else {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
@@ -44,7 +54,7 @@ class LobbyApi {
 
     @PostMapping("/quad")
     fun postQuad(response: HttpServletResponse, @SessionAttribute player: Player, value: Quad) {
-        if (player.role == Role.DRAW) {
+        if (player.role == Role.PAINTER) {
             player.lobby?.addQuad(value)
         } else {
             response.status = HttpStatus.BAD_REQUEST.value()

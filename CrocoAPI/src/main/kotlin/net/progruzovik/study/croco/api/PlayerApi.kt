@@ -33,7 +33,7 @@ class PlayerApi(val queueService: QueueService) {
 
     @PostMapping("/queue")
     fun postQueue(response: HttpServletResponse, @SessionAttribute player: Player) {
-        val isOk: Boolean = (player.role == Role.IDLE || player.role == Role.WIN) && queueService.add(player)
+        val isOk: Boolean = (player.role == Role.IDLER || player.role == Role.WINNER) && queueService.add(player)
         if (!isOk) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }

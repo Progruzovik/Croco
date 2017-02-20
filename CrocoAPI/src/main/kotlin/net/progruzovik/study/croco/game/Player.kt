@@ -8,10 +8,10 @@ data class Player(
 
     lateinit var name: String
 
-    @JsonIgnore var role: Role = Role.IDLE
+    @JsonIgnore var role: Role = Role.IDLER
     val roleCode: Int
         get() {
-            return role.number
+            return role.ordinal
         }
 
     @JsonIgnore var lobby: Lobby? = null

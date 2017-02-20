@@ -14,9 +14,9 @@ class QueueService {
             player.role = Role.QUEUED
             if (queuedPlayers.size >= Lobby.SIZE) {
                 val players: List<Player> = queuedPlayers.take(Lobby.SIZE)
-                val lobby = Lobby(players)
+                val lobby = Lobby(players, "куб")
                 players.forEach {
-                    it.role = Role.PLAY
+                    it.role = Role.PLAYER
                     it.lobby = lobby
                 }
                 queuedPlayers = queuedPlayers.drop(Lobby.SIZE).toMutableSet()
@@ -28,7 +28,7 @@ class QueueService {
 
     fun remove(player: Player): Boolean {
         if (queuedPlayers.remove(player)) {
-            player.role = Role.IDLE
+            player.role = Role.IDLER
             return true
         }
         return false
