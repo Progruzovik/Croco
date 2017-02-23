@@ -10,7 +10,8 @@ import javax.servlet.http.HttpSession
 
 @RestController
 @RequestMapping("/api/player")
-class PlayerApi(val queueService: QueueService) {
+class PlayerApi(
+        val queueService: QueueService) {
 
     @GetMapping("/role")
     fun getRole(@SessionAttribute player: Player): Any {
