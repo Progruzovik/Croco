@@ -1,10 +1,8 @@
 package net.progruzovik.study.croco.api
 
 import net.progruzovik.study.croco.enum.Role
-import net.progruzovik.study.croco.game.Lobby
 import net.progruzovik.study.croco.game.Player
 import net.progruzovik.study.croco.game.Quad
-import net.progruzovik.study.croco.game.SessionPlayer
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,14 +16,12 @@ class LobbyApi(
         val player: Player) {
 
     @GetMapping("/players")
-    fun getPlayers(response: HttpServletResponse): Any? {
-        return object {
-            val players = player.lobby.players
-        }
+    fun getPlayers(response: HttpServletResponse): Any {
+        return hashMapOf("players".to(player.lobby.players))
     }
 
     @GetMapping("/game")
-    fun getGame(response: HttpServletResponse): Lobby? {
+    fun getGame(response: HttpServletResponse): Any {
         return player.lobby
     }
 
@@ -35,9 +31,7 @@ class LobbyApi(
             response.status = HttpStatus.BAD_REQUEST.value()
             return null
         }
-        return object {
-            val keyword = player.lobby.keyword
-        }
+        return hashMapOf("keyword".to(player.lobby.keyword))
     }
 
     @PostMapping("/message")

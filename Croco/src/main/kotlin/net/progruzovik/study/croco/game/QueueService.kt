@@ -7,19 +7,19 @@ import java.util.*
 @Service
 class QueueService {
 
-    private var queuedPlayers: MutableSet<Player> = LinkedHashSet()
+    private val queuedPlayers: MutableSet<Player> = LinkedHashSet()
 
     fun add(player: Player): Boolean {
         if (queuedPlayers.add(player)) {
             player.role = Role.QUEUED
             if (queuedPlayers.size >= Lobby.SIZE) {
                 val players: List<Player> = queuedPlayers.take(Lobby.SIZE)
+                queuedPlayers.removeAll(players)
                 val lobby = Lobby(players, "куб")
                 players.forEach {
                     it.role = Role.PLAYER
                     it.lobby = lobby
                 }
-                queuedPlayers = queuedPlayers.drop(Lobby.SIZE).toMutableSet()
             }
             return true
         }

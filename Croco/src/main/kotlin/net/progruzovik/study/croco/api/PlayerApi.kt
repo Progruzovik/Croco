@@ -13,16 +13,12 @@ class PlayerApi(
 
     @GetMapping("/role")
     fun getRole(): Any {
-        return object {
-            val roleCode = player.roleCode
-        }
+        return hashMapOf("roleCode".to(player.roleCode))
     }
 
     @GetMapping("/name")
     fun getName(): Any {
-        return object {
-            val name = player.name
-        }
+        return hashMapOf("name".to(player.name))
     }
 
     @PostMapping("/name")
