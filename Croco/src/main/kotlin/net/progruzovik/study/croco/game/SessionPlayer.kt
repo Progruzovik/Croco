@@ -26,11 +26,10 @@ open class SessionPlayer @Autowired constructor(
 
     override val id: String = session.id
     override var name: String = "Guest"
-
-    @JsonIgnore override var role: Role = Role.IDLER
     override val roleCode: Int
         get() = role.ordinal
 
+    @JsonIgnore override var role: Role = Role.IDLER
     @JsonIgnore override lateinit var lobby: Lobby
 
     @PreDestroy fun clear() {

@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse
 class PlayerApi(
         val player: Player) {
 
-    @GetMapping("/role")
-    fun getRole(): Any {
-        return hashMapOf("roleCode".to(player.roleCode))
+    @GetMapping("/id")
+    fun getId(): Any {
+        return hashMapOf("id".to(player.id))
     }
 
     @GetMapping("/name")
@@ -24,6 +24,11 @@ class PlayerApi(
     @PostMapping("/name")
     fun postName(value: String) {
         player.name = value
+    }
+
+    @GetMapping("/role")
+    fun getRole(): Any {
+        return hashMapOf("roleCode".to(player.roleCode))
     }
 
     @PostMapping("/queue")

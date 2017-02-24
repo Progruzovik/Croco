@@ -6,10 +6,9 @@ interface Player {
 
     val id: String
     var name: String
-
-    var role: Role
     val roleCode: Int
 
+    var role: Role
     var lobby: Lobby
 
     fun toQueue(): Boolean
