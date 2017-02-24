@@ -10,9 +10,7 @@ data class Player(
 
     @JsonIgnore var role: Role = Role.IDLER
     val roleCode: Int
-        get() {
-            return role.ordinal
-        }
+        get() { return role.ordinal }
 
-    @JsonIgnore var lobby: Lobby? = null
+    @JsonIgnore lateinit var lobby: Lobby
 }

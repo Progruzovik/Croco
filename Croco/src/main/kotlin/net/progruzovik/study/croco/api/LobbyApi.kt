@@ -14,39 +14,31 @@ class LobbyApi {
 
     @GetMapping("/players")
     fun getPlayers(response: HttpServletResponse, @SessionAttribute player: Player): Any? {
-        if (player.lobby == null) {
-            response.status = HttpStatus.BAD_REQUEST.value()
-            return null
-        }
         return object {
-            val players = player.lobby?.players
+            val players = player.lobby.players
         }
     }
 
     @GetMapping("/game")
     fun getGame(response: HttpServletResponse, @SessionAttribute player: Player): Lobby? {
-        if (player.lobby == null) {
-            response.status = HttpStatus.BAD_REQUEST.value()
-            return null
-        }
         return player.lobby
     }
 
     @GetMapping("/keyword")
     fun getKeyword(response: HttpServletResponse, @SessionAttribute player: Player): Any? {
-        if (player.role == Role.PLAYER || player.lobby == null) {
+        if (player.role == Role.PLAYER) {
             response.status = HttpStatus.BAD_REQUEST.value()
             return null
         }
         return object {
-            val keyword = player.lobby?.keyword
+            val keyword = player.lobby.keyword
         }
     }
 
     @PostMapping("/message")
     fun postMessage(response: HttpServletResponse, @SessionAttribute player: Player, text: String) {
         if (player.role == Role.PLAYER) {
-            player.lobby?.addMessage(player, text)
+            player.lobby.addMessage(player, text)
         } else {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
@@ -55,7 +47,7 @@ class LobbyApi {
     @PostMapping("/quad")
     fun postQuad(response: HttpServletResponse, @SessionAttribute player: Player, value: Quad) {
         if (player.role == Role.PAINTER) {
-            player.lobby?.addQuad(value)
+            player.lobby.addQuad(value)
         } else {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
