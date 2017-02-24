@@ -1,16 +1,17 @@
 package net.progruzovik.study.croco.game
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import net.progruzovik.study.croco.enum.Role
 
-data class Player(
-        val id: String) {
+interface Player {
 
-    lateinit var name: String
+    val id: String
+    var name: String
 
-    @JsonIgnore var role: Role = Role.IDLER
+    var role: Role
     val roleCode: Int
-        get() { return role.ordinal }
 
-    @JsonIgnore lateinit var lobby: Lobby
+    var lobby: Lobby
+
+    fun toQueue(): Boolean
+    fun fromQueue(): Boolean
 }
