@@ -2,8 +2,7 @@ package net.progruzovik.study.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import net.progruzovik.study.croco.enum.Role
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import net.progruzovik.study.croco.getLogger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
@@ -18,7 +17,7 @@ open class SessionPlayer @Autowired constructor(
         private val queueService: QueueService) : Player {
 
     companion object {
-        val logger: Logger = LoggerFactory.getLogger(SessionPlayer::class.java)
+        val logger = getLogger<SessionPlayer>()
     }
 
     init {
