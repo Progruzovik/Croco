@@ -33,7 +33,7 @@ class PlayerApi(
 
     @PostMapping("/queue")
     fun postQueue(response: HttpServletResponse) {
-        val isOk: Boolean = (player.role == Role.IDLER || player.role == Role.WINNER) && player.toQueue()
+        val isOk: Boolean = (player.role == Role.IDLER || player.role == Role.WINNER) && player.addToQueue()
         if (!isOk) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
@@ -41,7 +41,7 @@ class PlayerApi(
 
     @DeleteMapping("/queue")
     fun deleteQueue(response: HttpServletResponse) {
-        if (!player.fromQueue()) {
+        if (!player.removeFromQueue()) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }

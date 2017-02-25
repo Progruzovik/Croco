@@ -11,6 +11,6 @@ interface Player {
     var role: Role
     var lobby: Lobby
 
-    fun toQueue(): Boolean
-    fun fromQueue(): Boolean
+    fun addToQueue(): Boolean
+    fun removeFromQueue(): Boolean
 }

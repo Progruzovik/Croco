@@ -3,21 +3,20 @@ package net.progruzovik.study.croco.game
 import com.fasterxml.jackson.annotation.JsonIgnore
 import net.progruzovik.study.croco.enum.Role
 import net.progruzovik.study.croco.getLogger
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.stereotype.Component
+import java.util.*
 import javax.annotation.PreDestroy
 import javax.servlet.http.HttpSession
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.INTERFACES)
-open class SessionPlayer @Autowired constructor(
-        session: HttpSession,
-        private val queueService: QueueService) : Player {
+open class SessionPlayer(session: HttpSession) : Player {
 
     companion object {
-        val logger = getLogger<SessionPlayer>()
+        private val logger = getLogger<SessionPlayer>()
+        private val queuedPlayers: MutableSet<Player> = LinkedHashSet()
     }
 
     init {
@@ -34,12 +33,33 @@ open class SessionPlayer @Autowired constructor(
 
     @PreDestroy fun clear() {
         if (role == Role.QUEUED) {
-            queueService.remove(this)
+            removeFromQueue()
         }
         logger.debug("Player with id = $id gone")
     }
 
-    override fun toQueue(): Boolean = queueService.add(this)
+    override fun addToQueue(): Boolean {
+        if (queuedPlayers.add(this)) {
+            role = Role.QUEUED
+            if (queuedPlayers.size >= Lobby.SIZE) {
+                val players: List<Player> = queuedPlayers.take(Lobby.SIZE)
+                queuedPlayers.removeAll(players)
+                val lobby = Lobby(players, "куб")
+                players.forEachIndexed { i, player ->
+                    player.role = if (i == 1) Role.PAINTER else Role.PLAYER
+                    player.lobby = lobby
+                }
+            }
+            return true
+        }
+        return false
+    }
 
-    override fun fromQueue(): Boolean = queueService.remove(this)
+    override fun removeFromQueue(): Boolean {
+        if (queuedPlayers.remove(this)) {
+            role = Role.IDLER
+            return true
+        }
+        return false
+    }
 }
