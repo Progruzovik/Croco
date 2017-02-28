@@ -16,7 +16,7 @@ open class SessionPlayer(session: HttpSession) : Player {
 
     companion object {
         private val logger = getLogger<SessionPlayer>()
-        private val queuedPlayers: MutableSet<Player> = LinkedHashSet()
+        private val queuedPlayers: MutableSet<SessionPlayer> = LinkedHashSet()
     }
 
     init {
@@ -30,6 +30,8 @@ open class SessionPlayer(session: HttpSession) : Player {
 
     @JsonIgnore override var role: Role = Role.IDLER
     @JsonIgnore override lateinit var lobby: Lobby
+    override val keyword: String?
+        @JsonIgnore get() = lobby.requestKeyword(role)
 
     @PreDestroy fun clear() {
         if (role == Role.QUEUED) {
@@ -39,10 +41,10 @@ open class SessionPlayer(session: HttpSession) : Player {
     }
 
     override fun addToQueue(): Boolean {
-        if (queuedPlayers.add(this)) {
+        if ((role == Role.IDLER || role == Role.WINNER) && queuedPlayers.add(this)) {
             role = Role.QUEUED
             if (queuedPlayers.size >= Lobby.SIZE) {
-                val players: List<Player> = queuedPlayers.take(Lobby.SIZE)
+                val players: List<SessionPlayer> = queuedPlayers.take(Lobby.SIZE)
                 queuedPlayers.removeAll(players)
                 val lobby = Lobby(players, "куб")
                 players.forEachIndexed { i, player ->
@@ -62,4 +64,8 @@ open class SessionPlayer(session: HttpSession) : Player {
         }
         return false
     }
+
+    override fun say(text: String): Boolean = lobby.addMessage(this, text)
+
+    override fun paint(quad: Quad): Boolean = lobby.addQuad(role, quad)
 }

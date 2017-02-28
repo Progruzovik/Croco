@@ -1,6 +1,5 @@
 package net.progruzovik.study.croco.api
 
-import net.progruzovik.study.croco.enum.Role
 import net.progruzovik.study.croco.game.Player
 import net.progruzovik.study.croco.game.Quad
 import org.springframework.http.HttpStatus
@@ -15,39 +14,31 @@ import javax.servlet.http.HttpServletResponse
 class LobbyApi(
         val player: Player) {
 
-    @GetMapping("/players")
-    fun getPlayers(response: HttpServletResponse): Any {
+    @GetMapping("/players") fun getPlayers(response: HttpServletResponse): Any {
         return hashMapOf("players".to(player.lobby.players))
     }
 
-    @GetMapping("/game")
-    fun getGame(response: HttpServletResponse): Any {
+    @GetMapping("/game") fun getGame(response: HttpServletResponse): Any {
         return player.lobby
     }
 
-    @GetMapping("/keyword")
-    fun getKeyword(response: HttpServletResponse): Any? {
-        if (player.role == Role.PLAYER) {
+    @GetMapping("/keyword") fun getKeyword(response: HttpServletResponse): Any? {
+        val keyword: String? = player.keyword
+        if (keyword == null) {
             response.status = HttpStatus.BAD_REQUEST.value()
             return null
         }
-        return hashMapOf("keyword".to(player.lobby.keyword))
+        return hashMapOf("keyword".to(player.keyword))
     }
 
-    @PostMapping("/message")
-    fun postMessage(response: HttpServletResponse, text: String) {
-        if (player.role == Role.PLAYER) {
-            player.lobby.addMessage(player, text)
-        } else {
+    @PostMapping("/message") fun postMessage(response: HttpServletResponse, text: String) {
+        if (!player.say(text)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
 
-    @PostMapping("/quad")
-    fun postQuad(response: HttpServletResponse, value: Quad) {
-        if (player.role == Role.PAINTER) {
-            player.lobby.addQuad(value)
-        } else {
+    @PostMapping("/quad") fun postQuad(response: HttpServletResponse, value: Quad) {
+        if (!player.paint(value)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
