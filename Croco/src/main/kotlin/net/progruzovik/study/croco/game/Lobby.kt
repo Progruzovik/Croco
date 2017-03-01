@@ -10,7 +10,7 @@ class Lobby(
         private val keyword: String) {
 
     companion object {
-        const val SIZE = 1
+        const val SIZE = 2
     }
 
     val messages = LinkedList<Message>()

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse
 @RestController
 @RequestMapping("/api/lobby")
 class LobbyApi(
-        val player: Player) {
+        private val player: Player) {
 
     @GetMapping("/players") fun getPlayers(response: HttpServletResponse): Any {
         return hashMapOf("players".to(player.lobby.players))

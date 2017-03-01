@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse
 @RestController
 @RequestMapping("/api/player")
 class PlayerApi(
-        val player: Player) {
+        private val player: Player) {
 
     @GetMapping("/id") fun getId(): Any {
         return hashMapOf("id".to(player.id))

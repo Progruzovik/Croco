@@ -48,7 +48,7 @@ open class SessionPlayer(session: HttpSession) : Player {
                 queuedPlayers.removeAll(players)
                 val lobby = Lobby(players, "куб")
                 players.forEachIndexed { i, player ->
-                    player.role = if (i == 1) Role.PAINTER else Role.PLAYER
+                    player.role = if (i == 0) Role.PAINTER else Role.PLAYER
                     player.lobby = lobby
                 }
             }
