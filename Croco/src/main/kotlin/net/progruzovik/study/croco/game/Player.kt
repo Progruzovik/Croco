@@ -12,11 +12,12 @@ interface Player {
 
     var role: Role
     val lobby: Lobby
-    val keyword: String?
 
     fun addToQueue(): Boolean
 
     fun removeFromQueue(): Boolean
+
+    fun requestKeyword(): String?
 
     fun say(text: String): Boolean
 

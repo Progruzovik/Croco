@@ -23,12 +23,12 @@ class LobbyApi(
     }
 
     @GetMapping("/keyword") fun getKeyword(response: HttpServletResponse): Any? {
-        val keyword: String? = player.keyword
+        val keyword: String? = player.requestKeyword()
         if (keyword == null) {
             response.status = HttpStatus.BAD_REQUEST.value()
             return null
         }
-        return hashMapOf("keyword".to(player.keyword))
+        return hashMapOf("keyword".to(keyword))
     }
 
     @PostMapping("/message") fun postMessage(response: HttpServletResponse, text: String) {

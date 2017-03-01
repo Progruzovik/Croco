@@ -2,7 +2,6 @@ package net.progruzovik.study.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import net.progruzovik.study.croco.enum.Role
-import net.progruzovik.study.croco.game.Player
 import java.util.*
 
 class Lobby(
@@ -16,7 +15,7 @@ class Lobby(
     val messages = LinkedList<Message>()
     val quads = LinkedList<Quad>()
 
-    fun requestKeyword(playerRole: Role): String? {
+    fun getKeyword(playerRole: Role): String? {
         return if (playerRole == Role.PAINTER) keyword else null
     }
 

@@ -30,8 +30,6 @@ open class SessionPlayer(session: HttpSession) : Player {
 
     @JsonIgnore override var role: Role = Role.IDLER
     @JsonIgnore override lateinit var lobby: Lobby
-    override val keyword: String?
-        @JsonIgnore get() = lobby.requestKeyword(role)
 
     @PreDestroy fun clear() {
         if (role == Role.QUEUED) {
@@ -64,6 +62,8 @@ open class SessionPlayer(session: HttpSession) : Player {
         }
         return false
     }
+
+    override fun requestKeyword(): String? = lobby.getKeyword(role)
 
     override fun say(text: String): Boolean = lobby.addMessage(this, text)
 
