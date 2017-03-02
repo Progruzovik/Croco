@@ -32,15 +32,15 @@ class Lobby(
         return true
     }
 
-    fun addQuad(playerRole: Role, quad: Quad): Boolean {
+    fun addQuad(playerRole: Role, number: Int, color: Int): Boolean {
         if (playerRole != Role.PAINTER) {
             return false
         }
-        val existingQuad: Quad? = quads.find { it.number == quad.number }
+        val existingQuad: Quad? = quads.find { it.number == number }
         if (existingQuad == null) {
-            quads.add(quad)
+            quads.add(Quad(number, color))
         } else {
-            existingQuad.color = quad.color
+            existingQuad.color = color
         }
         return true
     }

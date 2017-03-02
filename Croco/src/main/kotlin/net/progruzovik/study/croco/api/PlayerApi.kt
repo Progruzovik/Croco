@@ -18,7 +18,7 @@ class PlayerApi(
         return hashMapOf("name".to(player.name))
     }
 
-    @PostMapping("/name") fun postName(value: String) {
+    @PostMapping("/name") fun postName(@RequestParam("value") value: String) {
         player.name = value
     }
 

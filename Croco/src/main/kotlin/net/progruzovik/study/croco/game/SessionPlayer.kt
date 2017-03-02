@@ -67,5 +67,5 @@ open class SessionPlayer(session: HttpSession) : Player {
 
     override fun say(text: String): Boolean = lobby.addMessage(this, text)
 
-    override fun paint(quad: Quad): Boolean = lobby.addQuad(role, quad)
+    override fun paint(number: Int, color: Int): Boolean = lobby.addQuad(role, number, color)
 }

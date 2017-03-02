@@ -1,8 +1,6 @@
 package net.progruzovik.study.croco.game
 
 import net.progruzovik.study.croco.enum.Role
-import net.progruzovik.study.croco.game.Lobby
-import net.progruzovik.study.croco.game.Quad
 
 interface Player {
 
@@ -21,5 +19,5 @@ interface Player {
 
     fun say(text: String): Boolean
 
-    fun paint(quad: Quad): Boolean
+    fun paint(number: Int, color: Int): Boolean
 }

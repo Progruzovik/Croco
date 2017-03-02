@@ -1,12 +1,8 @@
 package net.progruzovik.study.croco.api
 
 import net.progruzovik.study.croco.game.Player
-import net.progruzovik.study.croco.game.Quad
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
 
 @RestController
@@ -14,12 +10,22 @@ import javax.servlet.http.HttpServletResponse
 class LobbyApi(
         private val player: Player) {
 
-    @GetMapping("/players") fun getPlayers(response: HttpServletResponse): Any {
-        return hashMapOf("players".to(player.lobby.players))
+    @GetMapping("/players") fun getPlayers(response: HttpServletResponse): Any? {
+        try {
+            return hashMapOf("players".to(player.lobby.players))
+        } catch (e: UninitializedPropertyAccessException) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            return null
+        }
     }
 
-    @GetMapping("/game") fun getGame(response: HttpServletResponse): Any {
-        return player.lobby
+    @GetMapping("/game") fun getGame(response: HttpServletResponse): Any? {
+        try {
+            return player.lobby
+        } catch (e: UninitializedPropertyAccessException) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            return null
+        }
     }
 
     @GetMapping("/keyword") fun getKeyword(response: HttpServletResponse): Any? {
@@ -31,14 +37,15 @@ class LobbyApi(
         return hashMapOf("keyword".to(keyword))
     }
 
-    @PostMapping("/message") fun postMessage(response: HttpServletResponse, text: String) {
+    @PostMapping("/message") fun postMessage(@RequestParam("text") text: String, response: HttpServletResponse) {
         if (!player.say(text)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
 
-    @PostMapping("/quad") fun postQuad(response: HttpServletResponse, value: Quad) {
-        if (!player.paint(value)) {
+    @PostMapping("/quad") fun postQuad(@RequestParam("number") number: Int, @RequestParam("color") color: Int,
+                                       response: HttpServletResponse) {
+        if (!player.paint(number, color)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
