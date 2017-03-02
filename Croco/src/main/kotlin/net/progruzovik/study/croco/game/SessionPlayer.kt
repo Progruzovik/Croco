@@ -63,9 +63,11 @@ open class SessionPlayer(session: HttpSession) : Player {
         return false
     }
 
-    override fun requestKeyword(): String? = lobby.getKeyword(role)
-
     override fun say(text: String): Boolean = lobby.addMessage(this, text)
 
     override fun paint(number: Int, color: Int): Boolean = lobby.addQuad(role, number, color)
+
+    override fun clearCanvas(): Boolean = lobby.removeQuads(role)
+
+    override fun requestKeyword(): String? = lobby.getKeyword(role)
 }

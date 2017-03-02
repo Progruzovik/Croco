@@ -9,15 +9,11 @@ class Lobby(
         private val keyword: String) {
 
     companion object {
-        const val SIZE = 2
+        const val SIZE = 1
     }
 
     val messages = LinkedList<Message>()
     val quads = LinkedList<Quad>()
-
-    fun getKeyword(playerRole: Role): String? {
-        return if (playerRole == Role.PAINTER) keyword else null
-    }
 
     fun addMessage(sender: Player, text: String): Boolean {
         if (sender.role != Role.PLAYER) {
@@ -43,5 +39,17 @@ class Lobby(
             existingQuad.color = color
         }
         return true
+    }
+
+    fun removeQuads(playerRole: Role): Boolean {
+        if (playerRole != Role.PAINTER) {
+            return false
+        }
+        quads.clear()
+        return true
+    }
+
+    fun getKeyword(playerRole: Role): String? {
+        return if (playerRole == Role.PLAYER) null else keyword
     }
 }

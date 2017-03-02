@@ -28,15 +28,6 @@ class LobbyApi(
         }
     }
 
-    @GetMapping("/keyword") fun getKeyword(response: HttpServletResponse): Any? {
-        val keyword: String? = player.requestKeyword()
-        if (keyword == null) {
-            response.status = HttpStatus.BAD_REQUEST.value()
-            return null
-        }
-        return hashMapOf("keyword".to(keyword))
-    }
-
     @PostMapping("/message") fun postMessage(@RequestParam("text") text: String, response: HttpServletResponse) {
         if (!player.say(text)) {
             response.status = HttpStatus.BAD_REQUEST.value()
@@ -48,5 +39,20 @@ class LobbyApi(
         if (!player.paint(number, color)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
+    }
+
+    @DeleteMapping("/quads") fun deleteQuads(response: HttpServletResponse) {
+        if (!player.clearCanvas()) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+        }
+    }
+
+    @GetMapping("/keyword") fun getKeyword(response: HttpServletResponse): Any? {
+        val keyword: String? = player.requestKeyword()
+        if (keyword == null) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            return null
+        }
+        return hashMapOf("keyword".to(keyword))
     }
 }

@@ -15,9 +15,11 @@ interface Player {
 
     fun removeFromQueue(): Boolean
 
-    fun requestKeyword(): String?
-
     fun say(text: String): Boolean
 
     fun paint(number: Int, color: Int): Boolean
+
+    fun clearCanvas(): Boolean
+
+    fun requestKeyword(): String?
 }
