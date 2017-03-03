@@ -1,19 +1,19 @@
 package net.progruzovik.study.croco.game
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import net.progruzovik.study.croco.enum.GameStatus
 import net.progruzovik.study.croco.enum.Role
 import java.util.*
 
 class Lobby(
-        @JsonIgnore val players: List<Player>,
+        val players: List<Player>,
         private val keyword: String) {
-
-    companion object {
-        const val SIZE = 1
-    }
 
     val messages = LinkedList<Message>()
     val quads = LinkedList<Quad>()
+
+    companion object {
+        const val SIZE = 2
+    }
 
     fun addMessage(sender: Player, text: String): Boolean {
         if (sender.role != Role.PLAYER) {
@@ -25,6 +25,7 @@ class Lobby(
                 it.role = if (it == sender) Role.WINNER else Role.IDLER
             }
         }
+        players.forEach { it.gameStatus = GameStatus.MODIFIED }
         return true
     }
 
@@ -38,6 +39,7 @@ class Lobby(
         } else {
             existingQuad.color = color
         }
+        players.forEach { it.gameStatus = GameStatus.MODIFIED }
         return true
     }
 
@@ -46,6 +48,7 @@ class Lobby(
             return false
         }
         quads.clear()
+        players.forEach { it.gameStatus = GameStatus.REDRAWN }
         return true
     }
 

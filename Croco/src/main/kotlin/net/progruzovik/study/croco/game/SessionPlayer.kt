@@ -1,6 +1,7 @@
 package net.progruzovik.study.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import net.progruzovik.study.croco.enum.GameStatus
 import net.progruzovik.study.croco.enum.Role
 import net.progruzovik.study.croco.getLogger
 import org.springframework.context.annotation.Scope
@@ -14,6 +15,15 @@ import javax.servlet.http.HttpSession
 @Scope(value = "session", proxyMode = ScopedProxyMode.INTERFACES)
 open class SessionPlayer(session: HttpSession) : Player {
 
+    override val id: String = session.id
+    override var name: String = "Guest"
+    override val roleCode: Int
+        get() = role.ordinal
+
+    @JsonIgnore override var role = Role.IDLER
+    @JsonIgnore override var gameStatus = GameStatus.ACTUAL
+    @JsonIgnore override lateinit var lobby: Lobby
+
     companion object {
         private val logger = getLogger<SessionPlayer>()
         private val queuedPlayers: MutableSet<SessionPlayer> = LinkedHashSet()
@@ -23,14 +33,6 @@ open class SessionPlayer(session: HttpSession) : Player {
         logger.debug("Player with id = ${session.id} arrived")
     }
 
-    override val id: String = session.id
-    override var name: String = "Guest"
-    override val roleCode: Int
-        get() = role.ordinal
-
-    @JsonIgnore override var role: Role = Role.IDLER
-    @JsonIgnore override lateinit var lobby: Lobby
-
     @PreDestroy fun clear() {
         if (role == Role.QUEUED) {
             removeFromQueue()
@@ -39,7 +41,7 @@ open class SessionPlayer(session: HttpSession) : Player {
     }
 
     override fun addToQueue(): Boolean {
-        if ((role == Role.IDLER || role == Role.WINNER) && queuedPlayers.add(this)) {
+        if (queuedPlayers.add(this)) {
             role = Role.QUEUED
             if (queuedPlayers.size >= Lobby.SIZE) {
                 val players: List<SessionPlayer> = queuedPlayers.take(Lobby.SIZE)
@@ -47,6 +49,7 @@ open class SessionPlayer(session: HttpSession) : Player {
                 val lobby = Lobby(players, "куб")
                 players.forEachIndexed { i, player ->
                     player.role = if (i == 0) Role.PAINTER else Role.PLAYER
+                    player.gameStatus = GameStatus.REDRAWN
                     player.lobby = lobby
                 }
             }

@@ -1,5 +1,6 @@
 package net.progruzovik.study.croco.game
 
+import net.progruzovik.study.croco.enum.GameStatus
 import net.progruzovik.study.croco.enum.Role
 
 interface Player {
@@ -9,6 +10,7 @@ interface Player {
     val roleCode: Int
 
     var role: Role
+    var gameStatus: GameStatus
     val lobby: Lobby
 
     fun addToQueue(): Boolean

@@ -1,5 +1,6 @@
 package net.progruzovik.study.croco.api
 
+import net.progruzovik.study.croco.enum.GameStatus
 import net.progruzovik.study.croco.game.Player
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -20,12 +21,16 @@ class LobbyApi(
     }
 
     @GetMapping("/game") fun getGame(response: HttpServletResponse): Any? {
-        try {
-            return player.lobby
-        } catch (e: UninitializedPropertyAccessException) {
-            response.status = HttpStatus.BAD_REQUEST.value()
+        if (player.gameStatus == GameStatus.ACTUAL) {
+            response.status = HttpStatus.NOT_MODIFIED.value()
             return null
         }
+        val wasRedrawn: Boolean = player.gameStatus == GameStatus.REDRAWN
+        player.gameStatus = GameStatus.ACTUAL
+        return hashMapOf(
+                "messages".to(player.lobby.messages),
+                "quads".to(player.lobby.quads),
+                "wasRedrawn".to(wasRedrawn))
     }
 
     @PostMapping("/message") fun postMessage(@RequestParam("text") text: String, response: HttpServletResponse) {
