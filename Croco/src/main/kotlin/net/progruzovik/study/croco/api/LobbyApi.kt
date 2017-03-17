@@ -25,12 +25,12 @@ class LobbyApi(
             response.status = HttpStatus.NOT_MODIFIED.value()
             return null
         }
-        val wasRedrawn: Boolean = player.gameStatus == GameStatus.REDRAWN
+        val redrawnCode = if (player.gameStatus == GameStatus.REDRAWN) 1 else 0
         player.gameStatus = GameStatus.ACTUAL
         return hashMapOf(
                 "messages".to(player.lobby.messages),
                 "quads".to(player.lobby.quads),
-                "wasRedrawn".to(wasRedrawn))
+                "redrawnCode".to(redrawnCode))
     }
 
     @PostMapping("/message") fun postMessage(@RequestParam("text") text: String, response: HttpServletResponse) {

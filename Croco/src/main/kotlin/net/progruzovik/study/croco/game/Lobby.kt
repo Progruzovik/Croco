@@ -30,7 +30,7 @@ class Lobby(
     }
 
     fun addQuad(playerRole: Role, number: Int, color: Int): Boolean {
-        if (playerRole != Role.PAINTER) {
+        if (playerRole != Role.PAINTER || number < 0) {
             return false
         }
         val existingQuad: Quad? = quads.find { it.number == number }
