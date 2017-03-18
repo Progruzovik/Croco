@@ -1,4 +1,4 @@
-package net.progruzovik.study.croco.api
+package net.progruzovik.study.croco.rest
 
 import net.progruzovik.study.croco.enum.GameStatus
 import net.progruzovik.study.croco.game.Player
@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/api/lobby")
-class LobbyApi(
+class LobbyRest(
         private val player: Player) {
 
     @GetMapping("/players") fun getPlayers(response: HttpServletResponse): Any? {

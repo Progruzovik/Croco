@@ -6,7 +6,7 @@ import net.progruzovik.study.croco.enum.Role
 class MockPlayer(
         override val id: String,
         override var name: String,
-        override var role: Role = Role.PLAYER) : Player {
+        override var role: Role = Role.GUESSER) : Player {
 
     override lateinit var gameStatus: GameStatus
     override lateinit var lobby: Lobby

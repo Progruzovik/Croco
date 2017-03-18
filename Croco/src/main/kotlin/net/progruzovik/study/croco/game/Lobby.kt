@@ -17,12 +17,12 @@ class Lobby(
         const val COLORS_NUMBER = 10
     }
 
-    fun addMessage(sender: Player, text: String): Boolean {
-        if (sender.role == Role.PLAYER) {
-            messages.add(Message(sender.name, text))
+    fun addMessage(player: Player, text: String): Boolean {
+        if (player.role == Role.GUESSER) {
+            messages.add(Message(player.name, text))
             if (text.toLowerCase() == keyword) {
                 players.forEach {
-                    it.role = if (it == sender) Role.WINNER else Role.IDLER
+                    it.role = if (it == player) Role.WINNER else Role.IDLER
                 }
             }
             players.forEach { it.gameStatus = GameStatus.MODIFIED }
@@ -56,6 +56,6 @@ class Lobby(
     }
 
     fun getKeyword(playerRole: Role): String? {
-        return if (playerRole == Role.PLAYER) null else keyword
+        return if (playerRole == Role.GUESSER) null else keyword
     }
 }

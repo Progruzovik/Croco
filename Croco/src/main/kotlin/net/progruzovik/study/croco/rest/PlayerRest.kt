@@ -1,4 +1,4 @@
-package net.progruzovik.study.croco.api
+package net.progruzovik.study.croco.rest
 
 import net.progruzovik.study.croco.game.Player
 import org.springframework.http.HttpStatus
@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/api/player")
-class PlayerApi(
+class PlayerRest(
         private val player: Player) {
 
     @GetMapping("/id") fun getId(): Any {

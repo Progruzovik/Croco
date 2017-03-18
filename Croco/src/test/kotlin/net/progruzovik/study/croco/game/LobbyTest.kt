@@ -23,19 +23,19 @@ class LobbyTest {
         assertFalse(lobby.addMessage(players.first { it.role == Role.PAINTER }, "Hello player!"))
         assertEquals(players[0].gameStatus, GameStatus.ACTUAL)
 
-        assertTrue(lobby.addMessage(players.first { it.role == Role.PLAYER }, "Hello painter!"))
+        assertTrue(lobby.addMessage(players.first { it.role == Role.GUESSER }, "Hello painter!"))
         assertEquals(lobby.messages.size, 1)
         assertEquals(players[0].gameStatus, GameStatus.MODIFIED)
     }
 
     @Test fun addKeyword() {
         assertNull(players.find { it.role == Role.WINNER })
-        assertTrue(lobby.addMessage(players.first { it.role == Role.PLAYER }, keyword))
+        assertTrue(lobby.addMessage(players.first { it.role == Role.GUESSER }, keyword))
         assertNotNull(players.find { it.role == Role.WINNER })
     }
 
     @Test fun addQuad() {
-        assertFalse(lobby.addQuad(Role.PLAYER, 0, 0))
+        assertFalse(lobby.addQuad(Role.GUESSER, 0, 0))
         assertFalse(lobby.addQuad(Role.PAINTER, -1, 0))
         assertEquals(players[0].gameStatus, GameStatus.ACTUAL)
 
@@ -45,7 +45,7 @@ class LobbyTest {
     }
 
     @Test fun removeQuads() {
-        assertFalse(lobby.removeQuads(Role.PLAYER))
+        assertFalse(lobby.removeQuads(Role.GUESSER))
         assertEquals(players[0].gameStatus, GameStatus.ACTUAL)
 
         assertTrue(lobby.removeQuads(Role.PAINTER))
@@ -53,7 +53,7 @@ class LobbyTest {
     }
 
     @Test fun getKeyword() {
-        assertNull(lobby.getKeyword(Role.PLAYER))
+        assertNull(lobby.getKeyword(Role.GUESSER))
         assertEquals(lobby.getKeyword(Role.PAINTER), keyword)
     }
 }
