@@ -25,7 +25,11 @@ class Lobby(
                     it.role = if (it == player) Role.WINNER else Role.IDLER
                 }
             }
-            players.forEach { it.gameStatus = GameStatus.MODIFIED }
+            players.forEach {
+                if (it.gameStatus == GameStatus.ACTUAL) {
+                    it.gameStatus = GameStatus.MODIFIED
+                }
+            }
             return true
         }
         return false
@@ -40,7 +44,11 @@ class Lobby(
             } else {
                 existingQuad.color = color
             }
-            players.forEach { it.gameStatus = GameStatus.MODIFIED }
+            players.forEach {
+                if (it.gameStatus == GameStatus.ACTUAL) {
+                    it.gameStatus = GameStatus.MODIFIED
+                }
+            }
             return true
         }
         return false
