@@ -7,7 +7,6 @@ interface Player {
 
     val id: String
     var name: String
-    val roleCode: Int
 
     var role: Role
     var gameStatus: GameStatus

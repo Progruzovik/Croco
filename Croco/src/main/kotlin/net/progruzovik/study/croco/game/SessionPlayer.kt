@@ -17,8 +17,6 @@ open class SessionPlayer(session: HttpSession) : Player {
 
     override val id: String = session.id
     override var name: String = "Guest"
-    override val roleCode: Int
-        get() = role.ordinal
 
     @JsonIgnore override var role = Role.IDLER
     @JsonIgnore override var gameStatus = GameStatus.ACTUAL

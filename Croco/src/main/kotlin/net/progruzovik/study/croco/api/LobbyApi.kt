@@ -39,7 +39,8 @@ class LobbyApi(
         }
     }
 
-    @PostMapping("/quad") fun postQuad(@RequestParam("number") number: Int, @RequestParam("color") color: Int,
+    @PostMapping("/quad") fun postQuad(@RequestParam("number") number: Int,
+                                       @RequestParam("color") color: Int,
                                        response: HttpServletResponse) {
         if (!player.paint(number, color)) {
             response.status = HttpStatus.BAD_REQUEST.value()

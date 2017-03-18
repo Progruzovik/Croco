@@ -23,7 +23,7 @@ class PlayerApi(
     }
 
     @GetMapping("/role") fun getRole(): Any {
-        return hashMapOf("roleCode".to(player.roleCode))
+        return hashMapOf("roleCode".to(player.role.ordinal))
     }
 
     @PostMapping("/queue") fun postQueue(response: HttpServletResponse) {

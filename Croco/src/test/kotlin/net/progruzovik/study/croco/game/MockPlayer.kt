@@ -8,8 +8,6 @@ class MockPlayer(
         override var name: String,
         override var role: Role = Role.PLAYER) : Player {
 
-    override val roleCode: Int
-        get() = role.ordinal
     override lateinit var gameStatus: GameStatus
     override lateinit var lobby: Lobby
 
