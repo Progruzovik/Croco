@@ -10,7 +10,7 @@ class LobbyTest {
 
     private val players: List<Player> = listOf(
             MockPlayer("1", "Tom"),
-            MockPlayer("2", "John", Role.PAINTER))
+            MockPlayer("2", "Carl", Role.PAINTER))
     private val keyword: String = "cube"
     private lateinit var lobby: Lobby
 
@@ -20,8 +20,10 @@ class LobbyTest {
     }
 
     @Test fun addMessage() {
-        assertTrue(lobby.addMessage(players.first { it.role == Role.PLAYER }, "Hello painter!"))
         assertFalse(lobby.addMessage(players.first { it.role == Role.PAINTER }, "Hello player!"))
+        assertEquals(players[0].gameStatus, GameStatus.ACTUAL)
+
+        assertTrue(lobby.addMessage(players.first { it.role == Role.PLAYER }, "Hello painter!"))
         assertEquals(lobby.messages.size, 1)
         assertEquals(players[0].gameStatus, GameStatus.MODIFIED)
     }
@@ -30,5 +32,28 @@ class LobbyTest {
         assertNull(players.find { it.role == Role.WINNER })
         assertTrue(lobby.addMessage(players.first { it.role == Role.PLAYER }, keyword))
         assertNotNull(players.find { it.role == Role.WINNER })
+    }
+
+    @Test fun addQuad() {
+        assertFalse(lobby.addQuad(Role.PLAYER, 0, 0))
+        assertFalse(lobby.addQuad(Role.PAINTER, -1, 0))
+        assertEquals(players[0].gameStatus, GameStatus.ACTUAL)
+
+        assertTrue(lobby.addQuad(Role.PAINTER, 0, 0))
+        assertEquals(lobby.quads.size, 1)
+        assertEquals(players[0].gameStatus, GameStatus.MODIFIED)
+    }
+
+    @Test fun removeQuads() {
+        assertFalse(lobby.removeQuads(Role.PLAYER))
+        assertEquals(players[0].gameStatus, GameStatus.ACTUAL)
+
+        assertTrue(lobby.removeQuads(Role.PAINTER))
+        assertEquals(players[0].gameStatus, GameStatus.REDRAWN)
+    }
+
+    @Test fun getKeyword() {
+        assertNull(lobby.getKeyword(Role.PLAYER))
+        assertEquals(lobby.getKeyword(Role.PAINTER), keyword)
     }
 }
