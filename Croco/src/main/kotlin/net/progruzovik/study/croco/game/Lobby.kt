@@ -1,15 +1,21 @@
 package net.progruzovik.study.croco.game
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import net.progruzovik.study.croco.enum.GameStatus
 import net.progruzovik.study.croco.enum.Role
 import java.util.*
 
-class Lobby(
-        val players: List<Player>,
-        private val keyword: String) {
+class Lobby(players: List<Player>) {
 
-    val messages = LinkedList<Message>()
-    val quads = LinkedList<Quad>()
+    val painter: Player = players.first()
+    val guessers: List<Player> = players.minus(painter)
+    var winner: Player? = null
+        private set
+
+    @JsonIgnore val messages = ArrayList<Message>()
+    @JsonIgnore val quads = ArrayList<Quad>()
+
+    private val keyword: String = "куб"
 
     companion object {
         const val SIZE = 2
@@ -17,15 +23,32 @@ class Lobby(
         const val COLORS_NUMBER = 10
     }
 
+    init {
+        painter.role = Role.PAINTER
+        painter.gameStatus = GameStatus.ACTUAL
+        painter.lobby = this
+        guessers.forEach {
+            it.role = Role.GUESSER
+            it.gameStatus = GameStatus.ACTUAL
+            it.lobby = this
+        }
+    }
+
     fun addMessage(player: Player, text: String): Boolean {
-        if (player.role == Role.GUESSER) {
+        if (guessers.contains(player) && winner == null) {
             messages.add(Message(player.name, text))
             if (text.toLowerCase() == keyword) {
-                players.forEach {
+                painter.role = Role.IDLER
+                guessers.forEach {
                     it.role = if (it == player) Role.WINNER else Role.IDLER
                 }
+                winner = player
             }
-            players.forEach {
+
+            if (painter.gameStatus == GameStatus.ACTUAL) {
+                painter.gameStatus = GameStatus.MODIFIED
+            }
+            guessers.forEach {
                 if (it.gameStatus == GameStatus.ACTUAL) {
                     it.gameStatus = GameStatus.MODIFIED
                 }
@@ -35,8 +58,9 @@ class Lobby(
         return false
     }
 
-    fun addQuad(playerRole: Role, number: Int, color: Int): Boolean {
-        if (playerRole == Role.PAINTER && number > -1 && number < QUADS_NUMBER
+    fun addQuad(player: Player, number: Int, color: Int): Boolean {
+        if (player == painter && winner == null
+                && number > -1 && number < QUADS_NUMBER
                 && color > -1 && color < COLORS_NUMBER) {
             val existingQuad: Quad? = quads.find { it.number == number }
             if (existingQuad == null) {
@@ -44,7 +68,11 @@ class Lobby(
             } else {
                 existingQuad.color = color
             }
-            players.forEach {
+
+            if (painter.gameStatus == GameStatus.ACTUAL) {
+                painter.gameStatus = GameStatus.MODIFIED
+            }
+            guessers.forEach {
                 if (it.gameStatus == GameStatus.ACTUAL) {
                     it.gameStatus = GameStatus.MODIFIED
                 }
@@ -54,16 +82,17 @@ class Lobby(
         return false
     }
 
-    fun removeQuads(playerRole: Role): Boolean {
-        if (playerRole == Role.PAINTER) {
+    fun removeQuads(player: Player): Boolean {
+        if (player == painter && winner == null) {
             quads.clear()
-            players.forEach { it.gameStatus = GameStatus.REDRAWN }
+            painter.gameStatus = GameStatus.REDRAWN
+            guessers.forEach { it.gameStatus = GameStatus.REDRAWN }
             return true
         }
         return false
     }
 
-    fun getKeyword(playerRole: Role): String? {
-        return if (playerRole == Role.GUESSER) null else keyword
+    fun getKeyword(player: Player): String? {
+        return if (player == painter) keyword else null
     }
 }

@@ -10,7 +10,7 @@ interface Player {
 
     var role: Role
     var gameStatus: GameStatus
-    val lobby: Lobby
+    var lobby: Lobby
 
     fun addToQueue(): Boolean
 

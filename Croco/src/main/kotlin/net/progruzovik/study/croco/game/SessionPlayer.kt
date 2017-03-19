@@ -24,7 +24,7 @@ open class SessionPlayer(session: HttpSession) : Player {
 
     companion object {
         private val logger = getLogger<SessionPlayer>()
-        private val queuedPlayers: MutableSet<SessionPlayer> = LinkedHashSet()
+        private val queuedPlayers = HashSet<SessionPlayer>()
     }
 
     init {
@@ -44,12 +44,7 @@ open class SessionPlayer(session: HttpSession) : Player {
             if (queuedPlayers.size >= Lobby.SIZE) {
                 val players: List<SessionPlayer> = queuedPlayers.take(Lobby.SIZE)
                 queuedPlayers.removeAll(players)
-                val lobby = Lobby(players, "куб")
-                players.forEachIndexed { i, player ->
-                    player.role = if (i == 0) Role.PAINTER else Role.GUESSER
-                    player.gameStatus = GameStatus.REDRAWN
-                    player.lobby = lobby
-                }
+                Lobby(players)
             }
             return true
         }
@@ -66,9 +61,9 @@ open class SessionPlayer(session: HttpSession) : Player {
 
     override fun say(text: String): Boolean = lobby.addMessage(this, text)
 
-    override fun paint(number: Int, color: Int): Boolean = lobby.addQuad(role, number, color)
+    override fun paint(number: Int, color: Int): Boolean = lobby.addQuad(this, number, color)
 
-    override fun clearCanvas(): Boolean = lobby.removeQuads(role)
+    override fun clearCanvas(): Boolean = lobby.removeQuads(this)
 
-    override fun requestKeyword(): String? = lobby.getKeyword(role)
+    override fun requestKeyword(): String? = lobby.getKeyword(this)
 }

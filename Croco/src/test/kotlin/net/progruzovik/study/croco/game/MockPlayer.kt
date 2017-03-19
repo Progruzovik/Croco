@@ -5,9 +5,9 @@ import net.progruzovik.study.croco.enum.Role
 
 class MockPlayer(
         override val id: String,
-        override var name: String,
-        override var role: Role = Role.GUESSER) : Player {
+        override var name: String) : Player {
 
+    override lateinit var role: Role
     override lateinit var gameStatus: GameStatus
     override lateinit var lobby: Lobby
 
@@ -17,9 +17,9 @@ class MockPlayer(
 
     override fun say(text: String): Boolean = lobby.addMessage(this, text)
 
-    override fun paint(number: Int, color: Int): Boolean = lobby.addQuad(role, number, color)
+    override fun paint(number: Int, color: Int): Boolean = lobby.addQuad(this, number, color)
 
-    override fun clearCanvas(): Boolean = lobby.removeQuads(role)
+    override fun clearCanvas(): Boolean = lobby.removeQuads(this)
 
-    override fun requestKeyword(): String? = lobby.getKeyword(role)
+    override fun requestKeyword(): String? = lobby.getKeyword(this)
 }

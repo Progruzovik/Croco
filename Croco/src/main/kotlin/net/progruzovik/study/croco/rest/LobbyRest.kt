@@ -1,7 +1,6 @@
 package net.progruzovik.study.croco.rest
 
 import net.progruzovik.study.croco.enum.GameStatus
-import net.progruzovik.study.croco.enum.Role
 import net.progruzovik.study.croco.game.Player
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -14,9 +13,7 @@ class LobbyRest(
 
     @GetMapping("/players") fun getPlayers(response: HttpServletResponse): Any? {
         try {
-            return hashMapOf(
-                    "painter".to(player.lobby.players.first { it.role == Role.PAINTER }),
-                    "guessers".to(player.lobby.players.filter { it.role == Role.GUESSER }))
+            return player.lobby
         } catch (e: UninitializedPropertyAccessException) {
             response.status = HttpStatus.BAD_REQUEST.value()
             return null
@@ -28,12 +25,11 @@ class LobbyRest(
             response.status = HttpStatus.NOT_MODIFIED.value()
             return null
         }
-        val redrawnCode = if (player.gameStatus == GameStatus.REDRAWN) 1 else 0
         player.gameStatus = GameStatus.ACTUAL
         return hashMapOf(
                 "messages".to(player.lobby.messages),
                 "quads".to(player.lobby.quads),
-                "redrawnCode".to(redrawnCode))
+                "redrawnCode".to(if (player.gameStatus == GameStatus.REDRAWN) 1 else 0))
     }
 
     @PostMapping("/message") fun postMessage(@RequestParam("text") text: String, response: HttpServletResponse) {
