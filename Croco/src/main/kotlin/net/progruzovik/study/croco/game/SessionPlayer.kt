@@ -1,8 +1,6 @@
 package net.progruzovik.study.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import net.progruzovik.study.croco.enum.GameStatus
-import net.progruzovik.study.croco.enum.Role
 import net.progruzovik.study.croco.getLogger
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
@@ -19,8 +17,8 @@ open class SessionPlayer(session: HttpSession) : Player {
     override var name: String = "Guest"
 
     @JsonIgnore override var role = Role.IDLER
-    @JsonIgnore override var gameStatus = GameStatus.ACTUAL
-    @JsonIgnore override lateinit var lobby: Lobby
+    @JsonIgnore override var lobby: Lobby? = null
+    @JsonIgnore override var wasRedrawn: Boolean = false
 
     companion object {
         private val logger = getLogger<SessionPlayer>()
@@ -59,11 +57,11 @@ open class SessionPlayer(session: HttpSession) : Player {
         return false
     }
 
-    override fun say(text: String): Boolean = lobby.addMessage(this, text)
+    override fun say(text: String): Boolean? = lobby?.addMessage(this, text)
 
-    override fun paint(number: Int, color: Int): Boolean = lobby.addQuad(this, number, color)
+    override fun paint(number: Int, color: Int): Boolean? = lobby?.addQuad(this, number, color)
 
-    override fun clearCanvas(): Boolean = lobby.removeQuads(this)
+    override fun clearCanvas(): Boolean? = lobby?.removeQuads(this)
 
-    override fun requestKeyword(): String? = lobby.getKeyword(this)
+    override fun requestKeyword(): String? = lobby?.getKeyword(this)
 }

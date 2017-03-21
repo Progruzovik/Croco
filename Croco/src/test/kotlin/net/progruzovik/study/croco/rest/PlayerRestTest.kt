@@ -4,7 +4,7 @@ package net.progruzovik.study.croco.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import junit.framework.TestCase.assertEquals
-import net.progruzovik.study.croco.enum.Role
+import net.progruzovik.study.croco.game.Role
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired

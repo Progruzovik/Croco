@@ -1,8 +1,6 @@
 package net.progruzovik.study.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import net.progruzovik.study.croco.enum.GameStatus
-import net.progruzovik.study.croco.enum.Role
 import java.util.*
 
 class Lobby(players: List<Player>) {
@@ -25,11 +23,11 @@ class Lobby(players: List<Player>) {
 
     init {
         painter.role = Role.PAINTER
-        painter.gameStatus = GameStatus.ACTUAL
+        painter.wasRedrawn = true
         painter.lobby = this
         guessers.forEach {
             it.role = Role.GUESSER
-            it.gameStatus = GameStatus.ACTUAL
+            it.wasRedrawn = true
             it.lobby = this
         }
     }
@@ -43,15 +41,6 @@ class Lobby(players: List<Player>) {
                     it.role = if (it == player) Role.WINNER else Role.IDLER
                 }
                 winner = player
-            }
-
-            if (painter.gameStatus == GameStatus.ACTUAL) {
-                painter.gameStatus = GameStatus.MODIFIED
-            }
-            guessers.forEach {
-                if (it.gameStatus == GameStatus.ACTUAL) {
-                    it.gameStatus = GameStatus.MODIFIED
-                }
             }
             return true
         }
@@ -68,15 +57,6 @@ class Lobby(players: List<Player>) {
             } else {
                 existingQuad.color = color
             }
-
-            if (painter.gameStatus == GameStatus.ACTUAL) {
-                painter.gameStatus = GameStatus.MODIFIED
-            }
-            guessers.forEach {
-                if (it.gameStatus == GameStatus.ACTUAL) {
-                    it.gameStatus = GameStatus.MODIFIED
-                }
-            }
             return true
         }
         return false
@@ -85,8 +65,8 @@ class Lobby(players: List<Player>) {
     fun removeQuads(player: Player): Boolean {
         if (player == painter && winner == null) {
             quads.clear()
-            painter.gameStatus = GameStatus.REDRAWN
-            guessers.forEach { it.gameStatus = GameStatus.REDRAWN }
+            painter.wasRedrawn = true
+            guessers.forEach { it.wasRedrawn = true }
             return true
         }
         return false
