@@ -1,35 +1,50 @@
 package net.progruzovik.study.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import java.time.Duration
+import java.time.LocalTime
 import java.util.*
 
-class Lobby(players: List<Player>) {
+class Lobby(guesser: Player,
+        val painter: Player) {
 
-    val painter: Player = players.first()
-    val guessers: List<Player> = players.minus(painter)
+    val guessers = ArrayList<Player>()
     var winner: Player? = null
         private set
 
     @JsonIgnore val messages = ArrayList<Message>()
     @JsonIgnore val quads = ArrayList<Quad>()
 
-    private val keyword: String = "куб"
+    private val keyword: String = keywords[random.nextInt(keywords.size)]
+    private val startTime = LocalTime.now()
 
     companion object {
-        const val SIZE = 2
-        const val QUADS_NUMBER = 1600
-        const val COLORS_NUMBER = 10
+        private const val SIZE = 5
+        private const val QUADS_NUMBER = 1600
+        private const val COLORS_NUMBER = 10
+
+        private val random = Random()
+        private val keywords = listOf("куб", "стюардесса", "краб", "дровосек", "химик",
+                "динозавр", "паук", "наковальня", "шахтёр", "лампочка", "бокал", "певец")
     }
 
     init {
         painter.role = Role.PAINTER
         painter.wasRedrawn = true
         painter.lobby = this
-        guessers.forEach {
-            it.role = Role.GUESSER
-            it.wasRedrawn = true
-            it.lobby = this
+        addGuesser(guesser)
+    }
+
+    fun addGuesser(guesser: Player): Boolean {
+        if (winner == null && painter != guesser && !guessers.contains(guesser) && guessers.size <= SIZE
+                && Duration.between(startTime, LocalTime.now()).toMinutes() < 1) {
+            guesser.role = Role.GUESSER
+            guesser.wasRedrawn = true
+            guesser.lobby = this
+            guessers.add(guesser)
+            return true
         }
+        return false
     }
 
     fun addMessage(player: Player, text: String): Boolean {

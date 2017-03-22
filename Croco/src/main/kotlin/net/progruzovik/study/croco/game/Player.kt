@@ -9,7 +9,7 @@ interface Player {
     var lobby: Lobby?
     var wasRedrawn: Boolean
 
-    fun addToQueue(): Boolean
+    fun addToQueue()
 
     fun removeFromQueue(): Boolean
 

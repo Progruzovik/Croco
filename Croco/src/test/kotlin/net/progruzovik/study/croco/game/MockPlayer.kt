@@ -8,7 +8,7 @@ class MockPlayer(
     override var lobby: Lobby? = null
     override var wasRedrawn: Boolean = false
 
-    override fun addToQueue(): Boolean = false
+    override fun addToQueue() {}
 
     override fun removeFromQueue(): Boolean = false
 

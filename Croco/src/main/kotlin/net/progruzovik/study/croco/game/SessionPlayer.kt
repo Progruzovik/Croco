@@ -5,7 +5,6 @@ import net.progruzovik.study.croco.getLogger
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.stereotype.Component
-import java.util.*
 import javax.annotation.PreDestroy
 import javax.servlet.http.HttpSession
 
@@ -22,7 +21,9 @@ open class SessionPlayer(session: HttpSession) : Player {
 
     companion object {
         private val logger = getLogger<SessionPlayer>()
-        private val queuedPlayers = HashSet<SessionPlayer>()
+
+        private var queuedPlayer: Player? = null
+        private var lastLobby: Lobby? = null
     }
 
     init {
@@ -36,21 +37,23 @@ open class SessionPlayer(session: HttpSession) : Player {
         logger.debug("Player with id = $id gone")
     }
 
-    override fun addToQueue(): Boolean {
-        if (queuedPlayers.add(this)) {
-            role = Role.QUEUED
-            if (queuedPlayers.size >= Lobby.SIZE) {
-                val players: List<SessionPlayer> = queuedPlayers.take(Lobby.SIZE)
-                queuedPlayers.removeAll(players)
-                Lobby(players)
+    override fun addToQueue() {
+        if (lastLobby?.addGuesser(this) != true) {
+            val painter: Player? = queuedPlayer
+            if (painter == null) {
+                queuedPlayer = this
+                lastLobby = null
+                role = Role.QUEUED
+            } else {
+                queuedPlayer = null
+                lastLobby = Lobby(this, painter)
             }
-            return true
         }
-        return false
     }
 
     override fun removeFromQueue(): Boolean {
-        if (queuedPlayers.remove(this)) {
+        if (queuedPlayer == this) {
+            queuedPlayer = null
             role = Role.IDLER
             return true
         }

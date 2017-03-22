@@ -9,7 +9,14 @@ class LobbyTest {
     private lateinit var lobby: Lobby
 
     @Before fun setUp() {
-        lobby = Lobby(listOf(MockPlayer("1", "Tom"), MockPlayer("2", "Carl")))
+        lobby = Lobby(MockPlayer("1", "Tom"), MockPlayer("2", "Carl"))
+    }
+
+    @Test fun addGuesser() {
+        assertFalse(lobby.addGuesser(lobby.painter))
+        assertFalse(lobby.addGuesser(lobby.guessers.first()))
+        assertTrue(lobby.addGuesser(MockPlayer("3", "John")))
+        assertEquals(2, lobby.guessers.size)
     }
 
     @Test fun addMessage() {
