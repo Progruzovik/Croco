@@ -30,7 +30,7 @@ class Lobby(guesser: Player,
 
     init {
         painter.role = Role.PAINTER
-        painter.wasRedrawn = true
+        painter.isQuadsRedrawn = true
         painter.lobby = this
         addGuesser(guesser)
     }
@@ -39,7 +39,7 @@ class Lobby(guesser: Player,
         if (winner == null && painter != guesser && !guessers.contains(guesser) && guessers.size <= SIZE
                 && Duration.between(startTime, LocalTime.now()).toMinutes() < 1) {
             guesser.role = Role.GUESSER
-            guesser.wasRedrawn = true
+            guesser.isQuadsRedrawn = true
             guesser.lobby = this
             guessers.add(guesser)
             return true
@@ -49,7 +49,7 @@ class Lobby(guesser: Player,
 
     fun addMessage(player: Player, text: String): Boolean {
         if (guessers.contains(player) && winner == null) {
-            messages.add(Message(player.name, text))
+            messages.add(Message(messages.size, player.name, text))
             if (text.toLowerCase() == keyword) {
                 painter.role = Role.IDLER
                 guessers.forEach {
@@ -57,6 +57,14 @@ class Lobby(guesser: Player,
                 }
                 winner = player
             }
+            return true
+        }
+        return false
+    }
+
+    fun markMessage(player: Player, number: Int, isMarked: Boolean?): Boolean {
+        if (player == painter && number < messages.size) {
+            messages[number].isMarked = isMarked
             return true
         }
         return false
@@ -80,8 +88,8 @@ class Lobby(guesser: Player,
     fun removeQuads(player: Player): Boolean {
         if (player == painter && winner == null) {
             quads.clear()
-            painter.wasRedrawn = true
-            guessers.forEach { it.wasRedrawn = true }
+            painter.isQuadsRedrawn = true
+            guessers.forEach { it.isQuadsRedrawn = true }
             return true
         }
         return false

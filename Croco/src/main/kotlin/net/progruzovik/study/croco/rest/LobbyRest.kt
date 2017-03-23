@@ -23,16 +23,24 @@ class LobbyRest(
             response.status = HttpStatus.BAD_REQUEST.value()
             return null
         }
-        val redrawnCode = if (player.wasRedrawn) 1 else 0
-        player.wasRedrawn = false
+        val isQuadsRedrawn = player.isQuadsRedrawn
+        player.isQuadsRedrawn = false
         return hashMapOf(
                 "messages".to(player.lobby?.messages),
                 "quads".to(player.lobby?.quads),
-                "redrawnCode".to(redrawnCode))
+                "quadsRedrawn".to(isQuadsRedrawn))
     }
 
     @PostMapping("/message") fun postMessage(@RequestParam("text") text: String, response: HttpServletResponse) {
-        if (player.say(text) != true) {
+        if (!player.say(text)) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+        }
+    }
+
+    @PostMapping("/mark") fun postMark(@RequestParam("number") number: Int,
+                                       @RequestParam(value = "marked", required = false) isMarked: Boolean?,
+                                       response: HttpServletResponse) {
+        if (!player.markMessage(number, isMarked)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
@@ -40,13 +48,13 @@ class LobbyRest(
     @PostMapping("/quad") fun postQuad(@RequestParam("number") number: Int,
                                        @RequestParam("color") color: Int,
                                        response: HttpServletResponse) {
-        if (player.paint(number, color) != true) {
+        if (!player.paint(number, color)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
 
     @DeleteMapping("/quads") fun deleteQuads(response: HttpServletResponse) {
-        if (player.clearCanvas() != true) {
+        if (!player.clearCanvas()) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }

@@ -1,4 +1,6 @@
 package net.progruzovik.study.croco.game
 
 data class Message(
-        val sender: String, val text: String)
+        val number: Int, val sender: String, val text: String) {
+    var isMarked: Boolean? = null
+}

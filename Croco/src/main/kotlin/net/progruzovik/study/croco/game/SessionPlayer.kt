@@ -17,7 +17,7 @@ open class SessionPlayer(session: HttpSession) : Player {
 
     @JsonIgnore override var role = Role.IDLER
     @JsonIgnore override var lobby: Lobby? = null
-    @JsonIgnore override var wasRedrawn: Boolean = false
+    @JsonIgnore override var isQuadsRedrawn: Boolean = false
 
     companion object {
         private val logger = getLogger<SessionPlayer>()
@@ -60,11 +60,21 @@ open class SessionPlayer(session: HttpSession) : Player {
         return false
     }
 
-    override fun say(text: String): Boolean? = lobby?.addMessage(this, text)
+    override fun say(text: String): Boolean {
+        return lobby?.addMessage(this, text) ?: false
+    }
 
-    override fun paint(number: Int, color: Int): Boolean? = lobby?.addQuad(this, number, color)
+    override fun markMessage(number: Int, isMarked: Boolean?): Boolean {
+        return lobby?.markMessage(this, number, isMarked) ?: false
+    }
 
-    override fun clearCanvas(): Boolean? = lobby?.removeQuads(this)
+    override fun paint(number: Int, color: Int): Boolean {
+        return lobby?.addQuad(this, number, color) ?: false
+    }
+
+    override fun clearCanvas(): Boolean {
+        return lobby?.removeQuads(this) ?: false
+    }
 
     override fun requestKeyword(): String? = lobby?.getKeyword(this)
 }

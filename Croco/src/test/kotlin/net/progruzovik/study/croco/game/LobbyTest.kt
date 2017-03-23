@@ -31,6 +31,16 @@ class LobbyTest {
         assertNotNull(lobby.winner)
     }
 
+    @Test fun markMessage() {
+        assertFalse(lobby.markMessage(lobby.painter, 0, true))
+        lobby.addMessage(lobby.guessers.first(), "Word")
+        assertFalse(lobby.markMessage(lobby.guessers.first(), 0, true))
+
+        assertNull(lobby.messages[0].isMarked)
+        assertTrue(lobby.markMessage(lobby.painter, 0, true))
+        assertNotNull(lobby.messages[0].isMarked)
+    }
+
     @Test fun addQuad() {
         assertFalse(lobby.addQuad(lobby.painter, -1, 0))
         assertFalse(lobby.addQuad(lobby.guessers.first(), 0, 0))
@@ -40,18 +50,18 @@ class LobbyTest {
 
     @Test fun removeQuads() {
         lobby.addQuad(lobby.painter, 0, 0)
-        lobby.painter.wasRedrawn = false
-        lobby.guessers.forEach { it.wasRedrawn = false }
+        lobby.painter.isQuadsRedrawn = false
+        lobby.guessers.forEach { it.isQuadsRedrawn = false }
 
         assertFalse(lobby.removeQuads(lobby.guessers.first()))
         assertFalse(lobby.quads.isEmpty())
-        assertFalse(lobby.painter.wasRedrawn)
-        assertFalse(lobby.guessers.first().wasRedrawn)
+        assertFalse(lobby.painter.isQuadsRedrawn)
+        assertFalse(lobby.guessers.first().isQuadsRedrawn)
 
         assertTrue(lobby.removeQuads(lobby.painter))
         assertTrue(lobby.quads.isEmpty())
-        assertTrue(lobby.painter.wasRedrawn)
-        assertTrue(lobby.guessers.first().wasRedrawn)
+        assertTrue(lobby.painter.isQuadsRedrawn)
+        assertTrue(lobby.guessers.first().isQuadsRedrawn)
     }
 
     @Test fun getKeyword() {

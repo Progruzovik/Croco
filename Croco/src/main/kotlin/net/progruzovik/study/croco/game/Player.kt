@@ -7,17 +7,19 @@ interface Player {
 
     var role: Role
     var lobby: Lobby?
-    var wasRedrawn: Boolean
+    var isQuadsRedrawn: Boolean
 
     fun addToQueue()
 
     fun removeFromQueue(): Boolean
 
-    fun say(text: String): Boolean?
+    fun say(text: String): Boolean
 
-    fun paint(number: Int, color: Int): Boolean?
+    fun markMessage(number: Int, isMarked: Boolean?): Boolean
 
-    fun clearCanvas(): Boolean?
+    fun paint(number: Int, color: Int): Boolean
+
+    fun clearCanvas(): Boolean
 
     fun requestKeyword(): String?
 }
