@@ -1,5 +1,6 @@
 package net.progruzovik.study.croco.rest
 
+import net.progruzovik.study.croco.game.Lobby
 import net.progruzovik.study.croco.game.Player
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -13,26 +14,35 @@ class LobbyRest(
     @GetMapping("/players") fun getPlayers(response: HttpServletResponse): Any? {
         if (player.lobby == null) {
             response.status = HttpStatus.BAD_REQUEST.value()
-            return null
         }
         return player.lobby
     }
 
     @GetMapping("/game") fun getGame(response: HttpServletResponse): Any? {
-        if (player.lobby == null) {
+        val lobby: Lobby? = player.lobby
+        if (lobby == null) {
             response.status = HttpStatus.BAD_REQUEST.value()
             return null
         }
         val isQuadsRedrawn = player.isQuadsRedrawn
         player.isQuadsRedrawn = false
         return hashMapOf(
-                "messages".to(player.lobby?.messages),
-                "quads".to(player.lobby?.quads),
+                "messages".to(lobby.messages),
+                "quads".to(lobby.quads),
                 "quadsRedrawn".to(isQuadsRedrawn))
     }
 
+    @GetMapping("/messages") fun getMessages(response: HttpServletResponse): Any? {
+        val lobby: Lobby? = player.lobby
+        if (lobby == null) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            return null
+        }
+        return hashMapOf("messages".to(lobby.messages))
+    }
+
     @PostMapping("/message") fun postMessage(@RequestParam("text") text: String, response: HttpServletResponse) {
-        if (!player.say(text)) {
+        if (!player.addMessage(text)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
@@ -48,13 +58,19 @@ class LobbyRest(
     @PostMapping("/quad") fun postQuad(@RequestParam("number") number: Int,
                                        @RequestParam("color") color: Int,
                                        response: HttpServletResponse) {
-        if (!player.paint(number, color)) {
+        if (!player.addQuad(number, color)) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+        }
+    }
+
+    @DeleteMapping("/quad") fun deleteQuad(@RequestParam("number") number: Int, response: HttpServletResponse) {
+        if (!player.removeQuad(number)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
 
     @DeleteMapping("/quads") fun deleteQuads(response: HttpServletResponse) {
-        if (!player.clearCanvas()) {
+        if (!player.removeQuads()) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }

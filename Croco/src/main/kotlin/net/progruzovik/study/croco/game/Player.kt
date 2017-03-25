@@ -9,17 +9,19 @@ interface Player {
     var lobby: Lobby?
     var isQuadsRedrawn: Boolean
 
-    fun addToQueue()
+    fun addToQueue(): Boolean
 
     fun removeFromQueue(): Boolean
 
-    fun say(text: String): Boolean
+    fun addMessage(text: String): Boolean
 
     fun markMessage(number: Int, isMarked: Boolean?): Boolean
 
-    fun paint(number: Int, color: Int): Boolean
+    fun addQuad(number: Int, color: Int): Boolean
 
-    fun clearCanvas(): Boolean
+    fun removeQuad(number: Int): Boolean
+
+    fun removeQuads(): Boolean
 
     fun requestKeyword(): String?
 }

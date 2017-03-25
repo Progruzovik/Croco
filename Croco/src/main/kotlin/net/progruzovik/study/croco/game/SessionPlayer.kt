@@ -37,18 +37,22 @@ open class SessionPlayer(session: HttpSession) : Player {
         logger.debug("Player with id = $id gone")
     }
 
-    override fun addToQueue() {
-        if (lastLobby?.addGuesser(this) != true) {
-            val painter: Player? = queuedPlayer
-            if (painter == null) {
-                queuedPlayer = this
-                lastLobby = null
-                role = Role.QUEUED
-            } else {
-                queuedPlayer = null
-                lastLobby = Lobby(this, painter)
+    override fun addToQueue(): Boolean {
+        val nextPainter: Player? = queuedPlayer
+        if (nextPainter != this) {
+            if (lastLobby?.addGuesser(this) != true) {
+                if (nextPainter == null) {
+                    queuedPlayer = this
+                    lastLobby = null
+                    role = Role.QUEUED
+                } else {
+                    queuedPlayer = null
+                    lastLobby = Lobby(this, nextPainter)
+                }
             }
+            return true
         }
+        return false
     }
 
     override fun removeFromQueue(): Boolean {
@@ -60,7 +64,7 @@ open class SessionPlayer(session: HttpSession) : Player {
         return false
     }
 
-    override fun say(text: String): Boolean {
+    override fun addMessage(text: String): Boolean {
         return lobby?.addMessage(this, text) ?: false
     }
 
@@ -68,11 +72,15 @@ open class SessionPlayer(session: HttpSession) : Player {
         return lobby?.markMessage(this, number, isMarked) ?: false
     }
 
-    override fun paint(number: Int, color: Int): Boolean {
+    override fun addQuad(number: Int, color: Int): Boolean {
         return lobby?.addQuad(this, number, color) ?: false
     }
 
-    override fun clearCanvas(): Boolean {
+    override fun removeQuad(number: Int): Boolean {
+        return lobby?.removeQuad(this, number) ?: false
+    }
+
+    override fun removeQuads(): Boolean {
         return lobby?.removeQuads(this) ?: false
     }
 

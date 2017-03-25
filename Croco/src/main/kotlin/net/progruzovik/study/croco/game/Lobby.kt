@@ -13,7 +13,7 @@ class Lobby(guesser: Player,
         private set
 
     @JsonIgnore val messages = ArrayList<Message>()
-    @JsonIgnore val quads = ArrayList<Quad>()
+    @JsonIgnore val quads = LinkedList<Quad>()
 
     private val keyword: String = keywords[random.nextInt(keywords.size)]
     private val startTime = LocalTime.now()
@@ -63,7 +63,7 @@ class Lobby(guesser: Player,
     }
 
     fun markMessage(player: Player, number: Int, isMarked: Boolean?): Boolean {
-        if (player == painter && number < messages.size) {
+        if (player == painter && winner == null && number < messages.size) {
             messages[number].isMarked = isMarked
             return true
         }
@@ -72,14 +72,21 @@ class Lobby(guesser: Player,
 
     fun addQuad(player: Player, number: Int, color: Int): Boolean {
         if (player == painter && winner == null
-                && number > -1 && number < QUADS_NUMBER
-                && color > -1 && color < COLORS_NUMBER) {
+                && number > -1 && number < QUADS_NUMBER && color > -1 && color < COLORS_NUMBER) {
             val existingQuad: Quad? = quads.find { it.number == number }
             if (existingQuad == null) {
                 quads.add(Quad(number, color))
             } else {
                 existingQuad.color = color
             }
+            return true
+        }
+        return false
+    }
+
+    fun removeQuad(player: Player, number: Int): Boolean {
+        if (player == painter && winner == null && number > -1 && number < QUADS_NUMBER) {
+            quads.remove(quads.find { it.number == number })
             return true
         }
         return false
@@ -96,6 +103,6 @@ class Lobby(guesser: Player,
     }
 
     fun getKeyword(player: Player): String? {
-        return if (player == painter) keyword else null
+        return if (player == painter || winner != null) keyword else null
     }
 }

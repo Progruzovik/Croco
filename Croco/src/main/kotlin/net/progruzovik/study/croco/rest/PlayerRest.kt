@@ -26,8 +26,10 @@ class PlayerRest(
         return hashMapOf("roleCode".to(player.role.ordinal))
     }
 
-    @PostMapping("/queue") fun postQueue() {
-        player.addToQueue()
+    @PostMapping("/queue") fun postQueue(response: HttpServletResponse) {
+        if (!player.addToQueue()) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+        }
     }
 
     @DeleteMapping("/queue") fun deleteQueue(response: HttpServletResponse) {

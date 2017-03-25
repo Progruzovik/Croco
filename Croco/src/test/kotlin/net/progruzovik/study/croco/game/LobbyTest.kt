@@ -28,7 +28,7 @@ class LobbyTest {
     @Test fun addKeyword() {
         assertNull(lobby.winner)
         assertTrue(lobby.addMessage(lobby.guessers.first(), lobby.getKeyword(lobby.painter)!!))
-        assertNotNull(lobby.winner)
+        assertEquals(lobby.winner, lobby.guessers.first())
     }
 
     @Test fun markMessage() {
@@ -46,6 +46,15 @@ class LobbyTest {
         assertFalse(lobby.addQuad(lobby.guessers.first(), 0, 0))
         assertTrue(lobby.addQuad(lobby.painter, 0, 0))
         assertEquals(lobby.quads.size, 1)
+    }
+
+    @Test fun removeQuad() {
+        lobby.addQuad(lobby.painter, 0, 0)
+        assertFalse(lobby.removeQuad(lobby.painter, -1))
+        assertFalse(lobby.removeQuad(lobby.guessers.first(), 0))
+        assertTrue(lobby.removeQuad(lobby.painter, 0))
+        assertTrue(lobby.quads.isEmpty())
+        assertTrue(lobby.removeQuad(lobby.painter, 1))
     }
 
     @Test fun removeQuads() {
@@ -66,6 +75,7 @@ class LobbyTest {
 
     @Test fun getKeyword() {
         assertNull(lobby.getKeyword(lobby.guessers.first()))
-        assertNotNull(lobby.getKeyword(lobby.painter))
+        lobby.addMessage(lobby.guessers.first(), lobby.getKeyword(lobby.painter)!!)
+        assertNotNull(lobby.getKeyword(lobby.guessers.first()))
     }
 }

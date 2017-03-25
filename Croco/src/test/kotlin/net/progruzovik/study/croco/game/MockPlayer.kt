@@ -8,11 +8,11 @@ class MockPlayer(
     override var lobby: Lobby? = null
     override var isQuadsRedrawn: Boolean = false
 
-    override fun addToQueue() {}
+    override fun addToQueue(): Boolean = false
 
     override fun removeFromQueue(): Boolean = false
 
-    override fun say(text: String): Boolean {
+    override fun addMessage(text: String): Boolean {
         return lobby?.addMessage(this, text) ?: false
     }
 
@@ -20,11 +20,15 @@ class MockPlayer(
         return lobby?.markMessage(this, number, isMarked) ?: false
     }
 
-    override fun paint(number: Int, color: Int): Boolean {
+    override fun addQuad(number: Int, color: Int): Boolean {
         return lobby?.addQuad(this, number, color) ?: false
     }
 
-    override fun clearCanvas(): Boolean {
+    override fun removeQuad(number: Int): Boolean {
+        return lobby?.removeQuad(this, number) ?: false
+    }
+
+    override fun removeQuads(): Boolean {
         return lobby?.removeQuads(this) ?: false
     }
 
