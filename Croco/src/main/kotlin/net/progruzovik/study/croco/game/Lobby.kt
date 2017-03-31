@@ -21,7 +21,7 @@ class Lobby(guesser: Player,
     companion object {
         private const val SIZE = 5
         private const val QUADS_NUMBER = 1600
-        private const val COLORS_NUMBER = 10
+        private const val COLORS_NUMBER = 14
 
         private val random = Random()
         private val keywords = listOf("куб", "стюардесса", "краб", "дровосек", "химик",
