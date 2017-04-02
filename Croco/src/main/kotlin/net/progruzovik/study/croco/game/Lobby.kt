@@ -1,7 +1,8 @@
 package net.progruzovik.study.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.time.Duration
+import java.lang.Math.abs
+import java.time.Duration.between
 import java.time.LocalTime
 import java.util.*
 
@@ -37,7 +38,7 @@ class Lobby(guesser: Player,
 
     fun addGuesser(guesser: Player): Boolean {
         if (winner == null && painter != guesser && !guessers.contains(guesser) && guessers.size <= SIZE
-                && Duration.between(startTime, LocalTime.now()).toMinutes() < 1) {
+                && abs(between(startTime, LocalTime.now()).toMinutes()) < 1) {
             guesser.role = Role.GUESSER
             guesser.isQuadsRedrawn = true
             guesser.lobby = this
