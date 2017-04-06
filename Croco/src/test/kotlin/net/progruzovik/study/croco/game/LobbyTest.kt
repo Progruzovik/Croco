@@ -7,9 +7,10 @@ import org.junit.Test
 class LobbyTest {
 
     private lateinit var lobby: Lobby
+    private val keyword: String = "cube"
 
     @Before fun setUp() {
-        lobby = Lobby(MockPlayer("1", "Tom"), MockPlayer("2", "Carl"))
+        lobby = Lobby(MockPlayer("1", "Tom"), MockPlayer("2", "Carl"), keyword)
     }
 
     @Test fun addGuesser() {
@@ -27,7 +28,7 @@ class LobbyTest {
 
     @Test fun addKeyword() {
         assertNull(lobby.winner)
-        assertTrue(lobby.addMessage(lobby.guessers.first(), lobby.getKeyword(lobby.painter)!!))
+        assertTrue(lobby.addMessage(lobby.guessers.first(), keyword))
         assertEquals(lobby.winner, lobby.guessers.first())
     }
 
@@ -45,7 +46,7 @@ class LobbyTest {
         assertFalse(lobby.addQuad(lobby.painter, -1, 0))
         assertFalse(lobby.addQuad(lobby.guessers.first(), 0, 0))
         assertTrue(lobby.addQuad(lobby.painter, 0, 0))
-        assertEquals(lobby.quads.size, 1)
+        assertEquals(1, lobby.quads.size)
     }
 
     @Test fun removeQuad() {
@@ -75,7 +76,6 @@ class LobbyTest {
 
     @Test fun getKeyword() {
         assertNull(lobby.getKeyword(lobby.guessers.first()))
-        lobby.addMessage(lobby.guessers.first(), lobby.getKeyword(lobby.painter)!!)
-        assertNotNull(lobby.getKeyword(lobby.guessers.first()))
+        assertEquals(keyword, lobby.getKeyword(lobby.painter))
     }
 }

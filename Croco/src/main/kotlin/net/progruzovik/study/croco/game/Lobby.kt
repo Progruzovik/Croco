@@ -7,7 +7,8 @@ import java.time.LocalTime
 import java.util.*
 
 class Lobby(guesser: Player,
-        val painter: Player) {
+            val painter: Player,
+            private val keyword: String) {
 
     val guessers = ArrayList<Player>()
     var winner: Player? = null
@@ -16,17 +17,12 @@ class Lobby(guesser: Player,
     @JsonIgnore val messages = ArrayList<Message>()
     @JsonIgnore val quads = LinkedList<Quad>()
 
-    private val keyword: String = keywords[random.nextInt(keywords.size)]
     private val startTime = LocalTime.now()
 
     companion object {
         private const val SIZE = 5
         private const val QUADS_NUMBER = 1600
         private const val COLORS_NUMBER = 14
-
-        private val random = Random()
-        private val keywords = listOf("куб", "стюардесса", "краб", "дровосек", "химик",
-                "динозавр", "паук", "наковальня", "шахтёр", "лампочка", "бокал", "певец")
     }
 
     init {
@@ -37,7 +33,7 @@ class Lobby(guesser: Player,
     }
 
     fun addGuesser(guesser: Player): Boolean {
-        if (winner == null && painter != guesser && !guessers.contains(guesser) && guessers.size <= SIZE
+        if (winner == null && painter != guesser && !guessers.contains(guesser) && guessers.size < SIZE
                 && abs(between(startTime, LocalTime.now()).toMinutes()) < 1) {
             guesser.role = Role.GUESSER
             guesser.isQuadsRedrawn = true

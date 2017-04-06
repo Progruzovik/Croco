@@ -1,4 +1,5 @@
 application.properties
+data.sql
 build/
 
 .idea/

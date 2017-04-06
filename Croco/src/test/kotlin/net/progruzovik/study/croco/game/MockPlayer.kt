@@ -4,7 +4,7 @@ class MockPlayer(
         override val id: String,
         override var name: String) : Player {
 
-    override lateinit var role: Role
+    override var role: Role = Role.IDLER
     override var lobby: Lobby? = null
     override var isQuadsRedrawn: Boolean = false
 
