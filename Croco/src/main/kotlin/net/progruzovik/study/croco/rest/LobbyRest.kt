@@ -24,12 +24,12 @@ class LobbyRest(
             response.status = HttpStatus.BAD_REQUEST.value()
             return null
         }
-        val isQuadsRedrawn = player.isQuadsRedrawn
-        player.isQuadsRedrawn = false
+        val isQuadsRemoved = player.isQuadsRemoved
+        player.isQuadsRemoved = false
         return hashMapOf(
                 "messages".to(lobby.messages),
                 "quads".to(lobby.quads),
-                "quadsRedrawn".to(isQuadsRedrawn))
+                "quadsRemoved".to(isQuadsRemoved))
     }
 
     @GetMapping("/messages") fun getMessages(response: HttpServletResponse): Any? {
@@ -47,23 +47,23 @@ class LobbyRest(
         }
     }
 
-    @PostMapping("/mark") fun postMark(@RequestParam("number") number: Int,
-                                       @RequestParam(value = "marked", required = false) isMarked: Boolean?,
-                                       response: HttpServletResponse) {
+    @PostMapping("/mark/{number}") fun postMark(@PathVariable number: Int,
+                                                @RequestParam(value = "marked", required = false) isMarked: Boolean?,
+                                                response: HttpServletResponse) {
         if (!player.markMessage(number, isMarked)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
 
-    @PostMapping("/quad") fun postQuad(@RequestParam("number") number: Int,
-                                       @RequestParam("color") color: Int,
-                                       response: HttpServletResponse) {
+    @PostMapping("/quad/{number}") fun postQuad(@PathVariable number: Int,
+                                                @RequestParam("color") color: Int,
+                                                response: HttpServletResponse) {
         if (!player.addQuad(number, color)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }
     }
 
-    @DeleteMapping("/quad") fun deleteQuad(@RequestParam("number") number: Int, response: HttpServletResponse) {
+    @DeleteMapping("/quad/{number}") fun deleteQuad(@PathVariable number: Int, response: HttpServletResponse) {
         if (!player.removeQuad(number)) {
             response.status = HttpStatus.BAD_REQUEST.value()
         }

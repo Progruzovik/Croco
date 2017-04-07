@@ -60,22 +60,22 @@ class LobbyTest {
 
     @Test fun removeQuads() {
         lobby.addQuad(lobby.painter, 0, 0)
-        lobby.painter.isQuadsRedrawn = false
-        lobby.guessers.forEach { it.isQuadsRedrawn = false }
+        lobby.painter.isQuadsRemoved = false
+        lobby.guessers.forEach { it.isQuadsRemoved = false }
 
         assertFalse(lobby.removeQuads(lobby.guessers.first()))
         assertFalse(lobby.quads.isEmpty())
-        assertFalse(lobby.painter.isQuadsRedrawn)
-        assertFalse(lobby.guessers.first().isQuadsRedrawn)
+        assertFalse(lobby.painter.isQuadsRemoved)
+        assertFalse(lobby.guessers.first().isQuadsRemoved)
 
         assertTrue(lobby.removeQuads(lobby.painter))
         assertTrue(lobby.quads.isEmpty())
-        assertTrue(lobby.painter.isQuadsRedrawn)
-        assertTrue(lobby.guessers.first().isQuadsRedrawn)
+        assertTrue(lobby.painter.isQuadsRemoved)
+        assertTrue(lobby.guessers.first().isQuadsRemoved)
     }
 
     @Test fun getKeyword() {
-        assertNull(lobby.getKeyword(lobby.guessers.first()))
-        assertEquals(keyword, lobby.getKeyword(lobby.painter))
+        assertNull(lobby.requestKeyword(lobby.guessers.first()))
+        assertEquals(keyword, lobby.requestKeyword(lobby.painter))
     }
 }

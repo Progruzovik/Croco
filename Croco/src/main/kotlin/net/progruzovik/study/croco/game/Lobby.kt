@@ -22,12 +22,12 @@ class Lobby(guesser: Player,
     companion object {
         private const val SIZE = 5
         private const val QUADS_NUMBER = 1600
-        private const val COLORS_NUMBER = 14
+        private const val COLORS_NUMBER = 13
     }
 
     init {
         painter.role = Role.PAINTER
-        painter.isQuadsRedrawn = true
+        painter.isQuadsRemoved = true
         painter.lobby = this
         addGuesser(guesser)
     }
@@ -36,7 +36,7 @@ class Lobby(guesser: Player,
         if (winner == null && painter != guesser && !guessers.contains(guesser) && guessers.size < SIZE
                 && abs(between(startTime, LocalTime.now()).toMinutes()) < 1) {
             guesser.role = Role.GUESSER
-            guesser.isQuadsRedrawn = true
+            guesser.isQuadsRemoved = true
             guesser.lobby = this
             guessers.add(guesser)
             return true
@@ -84,6 +84,8 @@ class Lobby(guesser: Player,
     fun removeQuad(player: Player, number: Int): Boolean {
         if (player == painter && winner == null && number > -1 && number < QUADS_NUMBER) {
             quads.remove(quads.find { it.number == number })
+            painter.isQuadsRemoved = true
+            guessers.forEach { it.isQuadsRemoved = true }
             return true
         }
         return false
@@ -92,14 +94,14 @@ class Lobby(guesser: Player,
     fun removeQuads(player: Player): Boolean {
         if (player == painter && winner == null) {
             quads.clear()
-            painter.isQuadsRedrawn = true
-            guessers.forEach { it.isQuadsRedrawn = true }
+            painter.isQuadsRemoved = true
+            guessers.forEach { it.isQuadsRemoved = true }
             return true
         }
         return false
     }
 
-    fun getKeyword(player: Player): String? {
+    fun requestKeyword(player: Player): String? {
         return if (player == painter || winner != null) keyword else null
     }
 }

@@ -7,7 +7,7 @@ interface Player {
 
     var role: Role
     var lobby: Lobby?
-    var isQuadsRedrawn: Boolean
+    var isQuadsRemoved: Boolean
 
     fun addToQueue(): Boolean
 

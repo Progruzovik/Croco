@@ -6,7 +6,7 @@ class MockPlayer(
 
     override var role: Role = Role.IDLER
     override var lobby: Lobby? = null
-    override var isQuadsRedrawn: Boolean = false
+    override var isQuadsRemoved: Boolean = false
 
     override fun addToQueue(): Boolean = false
 
@@ -32,5 +32,5 @@ class MockPlayer(
         return lobby?.removeQuads(this) ?: false
     }
 
-    override fun requestKeyword(): String? = lobby?.getKeyword(this)
+    override fun requestKeyword(): String? = lobby?.requestKeyword(this)
 }

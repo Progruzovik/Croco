@@ -18,7 +18,7 @@ open class SessionPlayer(session: HttpSession,
 
     @JsonIgnore override var role = Role.IDLER
     @JsonIgnore override var lobby: Lobby? = null
-    @JsonIgnore override var isQuadsRedrawn: Boolean = false
+    @JsonIgnore override var isQuadsRemoved: Boolean = false
 
     companion object {
         private val logger = getLogger<SessionPlayer>()
@@ -59,5 +59,5 @@ open class SessionPlayer(session: HttpSession,
         return lobby?.removeQuads(this) ?: false
     }
 
-    override fun requestKeyword(): String? = lobby?.getKeyword(this)
+    override fun requestKeyword(): String? = lobby?.requestKeyword(this)
 }
