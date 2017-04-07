@@ -83,7 +83,14 @@ class Lobby(guesser: Player,
 
     fun removeQuad(player: Player, number: Int): Boolean {
         if (player == painter && winner == null && number > -1 && number < QUADS_NUMBER) {
-            quads.remove(quads.find { it.number == number })
+            val iterator: MutableIterator<Quad> = quads.iterator()
+            var isRemoved: Boolean = false
+            while (iterator.hasNext() && !isRemoved) {
+                if (iterator.next().number == number) {
+                    iterator.remove()
+                    isRemoved = true
+                }
+            }
             painter.isQuadsRemoved = true
             guessers.forEach { it.isQuadsRemoved = true }
             return true
