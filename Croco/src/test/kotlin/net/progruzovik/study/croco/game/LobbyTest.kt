@@ -51,15 +51,29 @@ class LobbyTest {
 
     @Test fun removeQuad() {
         lobby.addQuad(lobby.painter, 0, 0)
+        lobby.addQuad(lobby.painter, 1, 1)
+        lobby.painter.isQuadsRemoved = false
+        lobby.guessers.forEach { it.isQuadsRemoved = false }
+
         assertFalse(lobby.removeQuad(lobby.painter, -1))
         assertFalse(lobby.removeQuad(lobby.guessers.first(), 0))
+        assertEquals(2, lobby.quads.size)
+        assertFalse(lobby.painter.isQuadsRemoved)
+        assertFalse(lobby.guessers.first().isQuadsRemoved)
+
         assertTrue(lobby.removeQuad(lobby.painter, 0))
-        assertTrue(lobby.quads.isEmpty())
+        assertEquals(1, lobby.quads.size)
+        assertTrue(lobby.painter.isQuadsRemoved)
+        assertTrue(lobby.guessers.first().isQuadsRemoved)
+
         assertTrue(lobby.removeQuad(lobby.painter, 1))
+        assertTrue(lobby.quads.isEmpty())
+        assertTrue(lobby.removeQuad(lobby.painter, 2))
     }
 
     @Test fun removeQuads() {
         lobby.addQuad(lobby.painter, 0, 0)
+        lobby.addQuad(lobby.painter, 1, 1)
         lobby.painter.isQuadsRemoved = false
         lobby.guessers.forEach { it.isQuadsRemoved = false }
 

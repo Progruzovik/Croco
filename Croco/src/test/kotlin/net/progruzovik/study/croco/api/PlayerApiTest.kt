@@ -1,6 +1,6 @@
 @file:Suppress("SpringKotlinAutowiredMembers")
 
-package net.progruzovik.study.croco.rest
+package net.progruzovik.study.croco.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import junit.framework.TestCase.assertEquals
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class PlayerRestTest {
+class PlayerApiTest {
 
     @Autowired lateinit var restTemplate: TestRestTemplate
 
