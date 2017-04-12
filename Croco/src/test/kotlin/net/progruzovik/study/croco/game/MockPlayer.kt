@@ -1,5 +1,7 @@
 package net.progruzovik.study.croco.game
 
+import net.progruzovik.study.croco.data.Role
+
 class MockPlayer(
         override val id: String,
         override var name: String) : Player {
@@ -7,10 +9,6 @@ class MockPlayer(
     override var role: Role = Role.IDLER
     override var lobby: Lobby? = null
     override var isQuadsRemoved: Boolean = false
-
-    override fun addToQueue(): Boolean = false
-
-    override fun removeFromQueue(): Boolean = false
 
     override fun addMessage(text: String): Boolean {
         return lobby?.addMessage(this, text) ?: false

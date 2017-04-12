@@ -1,6 +1,7 @@
 package net.progruzovik.study.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import net.progruzovik.study.croco.data.Role
 import net.progruzovik.study.croco.getLogger
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
@@ -10,8 +11,7 @@ import javax.servlet.http.HttpSession
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.INTERFACES)
-open class SessionPlayer(session: HttpSession,
-                         private val queueService: QueueService) : Player {
+open class SessionPlayer(session: HttpSession) : Player {
 
     override val id: String = session.id
     override var name: String = "Guest"
@@ -28,16 +28,12 @@ open class SessionPlayer(session: HttpSession,
         logger.debug("Player with id = ${session.id} arrived")
     }
 
-    @PreDestroy fun clear() {
+    @PreDestroy fun clear(queue: Queue) {
         if (role == Role.QUEUED) {
-            removeFromQueue()
+            queue.removePlayer(this)
         }
         logger.debug("Player with id = $id gone")
     }
-
-    override fun addToQueue(): Boolean = queueService.addPlayer(this)
-
-    override fun removeFromQueue(): Boolean = queueService.removePlayer(this)
 
     override fun addMessage(text: String): Boolean {
         return lobby?.addMessage(this, text) ?: false

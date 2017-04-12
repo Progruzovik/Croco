@@ -3,93 +3,106 @@ package net.progruzovik.study.croco.game
 import junit.framework.TestCase.*
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.DirtiesContext
+import org.springframework.test.context.junit4.SpringRunner
 
+@RunWith(SpringRunner::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class LobbyTest {
 
+    @Autowired lateinit var queue: Queue
+
+    private val painter = MockPlayer("1", "Tom")
+    private val guesser = MockPlayer("2", "Carl")
+
     private lateinit var lobby: Lobby
-    private val keyword: String = "cube"
 
     @Before fun setUp() {
-        lobby = Lobby(MockPlayer("1", "Tom"), MockPlayer("2", "Carl"), keyword)
+        queue.addPlayer(painter)
+        queue.addPlayer(guesser)
+        lobby = painter.lobby!!
     }
 
     @Test fun addGuesser() {
-        assertFalse(lobby.addGuesser(lobby.painter))
-        assertFalse(lobby.addGuesser(lobby.guessers.first()))
+        assertFalse(lobby.addGuesser(painter))
+        assertFalse(lobby.addGuesser(guesser))
         assertTrue(lobby.addGuesser(MockPlayer("3", "John")))
         assertEquals(2, lobby.guessers.size)
     }
 
     @Test fun addMessage() {
-        assertFalse(lobby.addMessage(lobby.painter, "Hello player!"))
-        assertTrue(lobby.addMessage(lobby.guessers.first(), "Hello painter!"))
+        assertFalse(lobby.addMessage(painter, "Hello player!"))
+        assertTrue(lobby.addMessage(guesser, "Hello painter!"))
         assertEquals(1, lobby.messages.size)
     }
 
     @Test fun addKeyword() {
         assertNull(lobby.winner)
-        assertTrue(lobby.addMessage(lobby.guessers.first(), keyword))
-        assertEquals(lobby.winner, lobby.guessers.first())
+        assertTrue(lobby.addMessage(guesser, painter.requestKeyword()!!))
+        assertEquals(lobby.winner, guesser)
     }
 
     @Test fun markMessage() {
-        assertFalse(lobby.markMessage(lobby.painter, 0, true))
-        lobby.addMessage(lobby.guessers.first(), "Word")
-        assertFalse(lobby.markMessage(lobby.guessers.first(), 0, true))
+        assertFalse(lobby.markMessage(painter, 0, true))
+        lobby.addMessage(guesser, "Word")
+        assertFalse(lobby.markMessage(guesser, 0, true))
 
         assertNull(lobby.messages[0].isMarked)
-        assertTrue(lobby.markMessage(lobby.painter, 0, true))
+        assertTrue(lobby.markMessage(painter, 0, true))
         assertNotNull(lobby.messages[0].isMarked)
     }
 
     @Test fun addQuad() {
-        assertFalse(lobby.addQuad(lobby.painter, -1, 0))
-        assertFalse(lobby.addQuad(lobby.guessers.first(), 0, 0))
-        assertTrue(lobby.addQuad(lobby.painter, 0, 0))
+        assertFalse(lobby.addQuad(painter, -1, 0))
+        assertFalse(lobby.addQuad(guesser, 0, 0))
+        assertTrue(lobby.addQuad(painter, 0, 0))
         assertEquals(1, lobby.quads.size)
     }
 
     @Test fun removeQuad() {
-        lobby.addQuad(lobby.painter, 0, 0)
-        lobby.addQuad(lobby.painter, 1, 1)
-        lobby.painter.isQuadsRemoved = false
-        lobby.guessers.forEach { it.isQuadsRemoved = false }
+        lobby.addQuad(painter, 0, 0)
+        lobby.addQuad(painter, 1, 1)
+        painter.isQuadsRemoved = false
+        guesser.isQuadsRemoved = false
 
-        assertFalse(lobby.removeQuad(lobby.painter, -1))
-        assertFalse(lobby.removeQuad(lobby.guessers.first(), 0))
+        assertFalse(lobby.removeQuad(painter, -1))
+        assertFalse(lobby.removeQuad(guesser, 0))
         assertEquals(2, lobby.quads.size)
-        assertFalse(lobby.painter.isQuadsRemoved)
-        assertFalse(lobby.guessers.first().isQuadsRemoved)
+        assertFalse(painter.isQuadsRemoved)
+        assertFalse(guesser.isQuadsRemoved)
 
-        assertTrue(lobby.removeQuad(lobby.painter, 0))
+        assertTrue(lobby.removeQuad(painter, 0))
         assertEquals(1, lobby.quads.size)
-        assertTrue(lobby.painter.isQuadsRemoved)
-        assertTrue(lobby.guessers.first().isQuadsRemoved)
+        assertTrue(painter.isQuadsRemoved)
+        assertTrue(guesser.isQuadsRemoved)
 
-        assertTrue(lobby.removeQuad(lobby.painter, 1))
+        assertTrue(lobby.removeQuad(painter, 1))
         assertTrue(lobby.quads.isEmpty())
-        assertTrue(lobby.removeQuad(lobby.painter, 2))
+        assertTrue(lobby.removeQuad(painter, 2))
     }
 
     @Test fun removeQuads() {
-        lobby.addQuad(lobby.painter, 0, 0)
-        lobby.addQuad(lobby.painter, 1, 1)
-        lobby.painter.isQuadsRemoved = false
-        lobby.guessers.forEach { it.isQuadsRemoved = false }
+        lobby.addQuad(painter, 0, 0)
+        lobby.addQuad(painter, 1, 1)
+        painter.isQuadsRemoved = false
+        guesser.isQuadsRemoved = false
 
-        assertFalse(lobby.removeQuads(lobby.guessers.first()))
+        assertFalse(lobby.removeQuads(guesser))
         assertFalse(lobby.quads.isEmpty())
-        assertFalse(lobby.painter.isQuadsRemoved)
-        assertFalse(lobby.guessers.first().isQuadsRemoved)
+        assertFalse(painter.isQuadsRemoved)
+        assertFalse(guesser.isQuadsRemoved)
 
-        assertTrue(lobby.removeQuads(lobby.painter))
+        assertTrue(lobby.removeQuads(painter))
         assertTrue(lobby.quads.isEmpty())
-        assertTrue(lobby.painter.isQuadsRemoved)
-        assertTrue(lobby.guessers.first().isQuadsRemoved)
+        assertTrue(painter.isQuadsRemoved)
+        assertTrue(guesser.isQuadsRemoved)
     }
 
-    @Test fun getKeyword() {
-        assertNull(lobby.requestKeyword(lobby.guessers.first()))
-        assertEquals(keyword, lobby.requestKeyword(lobby.painter))
+    @Test fun requestKeyword() {
+        assertNull(lobby.requestKeyword(guesser))
     }
 }

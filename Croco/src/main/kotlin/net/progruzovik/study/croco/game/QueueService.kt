@@ -1,16 +1,19 @@
 package net.progruzovik.study.croco.game
 
-import net.progruzovik.study.croco.dao.KeywordDao
+import net.progruzovik.study.croco.data.Role
+import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Service
 
 @Service
 class QueueService(
-        private val keywordDao: KeywordDao) {
+        private val lobbyFactory: ObjectFactory<Lobby>) : Queue {
 
-    private var queuedPlayer: Player? = null
+    override var queuedPlayer: Player? = null
+        private set
+
     private var lastLobby: Lobby? = null
 
-    fun addPlayer(player: Player): Boolean {
+    override fun addPlayer(player: Player): Boolean {
         val nextPainter: Player? = queuedPlayer
         if (nextPainter != player) {
             if (lastLobby?.addGuesser(player) != true) {
@@ -19,8 +22,10 @@ class QueueService(
                     lastLobby = null
                     player.role = Role.QUEUED
                 } else {
+                    val lobby: Lobby = lobbyFactory.`object`
+                    lobby.addGuesser(player)
                     queuedPlayer = null
-                    lastLobby = Lobby(player, nextPainter, keywordDao.getRandomKeyword())
+                    lastLobby = lobby
                 }
             }
             return true
@@ -28,7 +33,7 @@ class QueueService(
         return false
     }
 
-    fun removePlayer(player: Player): Boolean {
+    override fun removePlayer(player: Player): Boolean {
         if (queuedPlayer == player) {
             queuedPlayer = null
             player.role = Role.IDLER

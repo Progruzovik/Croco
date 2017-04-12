@@ -1,30 +1,36 @@
 package net.progruzovik.study.croco.game
 
 import junit.framework.TestCase.*
+import net.progruzovik.study.croco.data.Role
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit4.SpringRunner
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class QueueServiceTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+class QueueTest {
 
-    @Autowired lateinit var queueService: QueueService
+    @Autowired lateinit var queue: Queue
 
     @Test fun addPlayer() {
         val painter = MockPlayer("1", "Tom")
         val guesser = MockPlayer("2", "Steve")
+        assertNull(queue.queuedPlayer)
         assertNull(painter.lobby)
         assertEquals(Role.IDLER, painter.role)
         assertNull(guesser.lobby)
         assertEquals(Role.IDLER, guesser.role)
 
-        assertTrue(queueService.addPlayer(painter))
+        assertTrue(queue.addPlayer(painter))
+        assertEquals(painter, queue.queuedPlayer)
         assertEquals(Role.QUEUED, painter.role)
-        assertTrue(queueService.addPlayer(guesser))
+        assertTrue(queue.addPlayer(guesser))
 
+        assertNull(queue.queuedPlayer)
         assertNotNull(painter.lobby)
         assertEquals(Role.PAINTER, painter.role)
         assertNotNull(guesser.lobby)
@@ -33,10 +39,15 @@ class QueueServiceTest {
 
     @Test fun removePlayer() {
         val player = MockPlayer("1", "Carl")
-        assertFalse(queueService.removePlayer(player))
-        queueService.addPlayer(player)
+        assertNull(queue.queuedPlayer)
+        assertFalse(queue.removePlayer(player))
+
+        assertTrue(queue.addPlayer(player))
+        assertEquals(player, queue.queuedPlayer)
         assertEquals(Role.QUEUED, player.role)
-        assertTrue(queueService.removePlayer(player))
+
+        assertTrue(queue.removePlayer(player))
+        assertNull(queue.queuedPlayer)
         assertEquals(Role.IDLER, player.role)
     }
 }
