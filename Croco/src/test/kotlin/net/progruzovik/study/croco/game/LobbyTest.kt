@@ -43,7 +43,7 @@ class LobbyTest {
     @Test fun addKeyword() {
         assertNull(lobby.winner)
         assertTrue(lobby.addMessage(guesser, painter.requestKeyword()!!))
-        assertEquals(lobby.winner, guesser)
+        assertEquals(guesser, lobby.winner)
     }
 
     @Test fun markMessage() {

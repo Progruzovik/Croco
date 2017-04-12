@@ -11,7 +11,8 @@ import javax.servlet.http.HttpSession
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.INTERFACES)
-open class SessionPlayer(session: HttpSession) : Player {
+open class SessionPlayer(session: HttpSession,
+                         private val queue: Queue) : Player {
 
     override val id: String = session.id
     override var name: String = "Guest"
@@ -28,7 +29,7 @@ open class SessionPlayer(session: HttpSession) : Player {
         logger.debug("Player with id = ${session.id} arrived")
     }
 
-    @PreDestroy fun clear(queue: Queue) {
+    @PreDestroy fun clear() {
         if (role == Role.QUEUED) {
             queue.removePlayer(this)
         }
