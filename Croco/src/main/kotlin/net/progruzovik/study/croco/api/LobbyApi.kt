@@ -2,6 +2,7 @@ package net.progruzovik.study.croco.api
 
 import net.progruzovik.study.croco.game.Lobby
 import net.progruzovik.study.croco.game.Player
+import net.progruzovik.study.croco.getLogger
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
@@ -11,9 +12,14 @@ import javax.servlet.http.HttpServletResponse
 class LobbyApi(
         private val player: Player) {
 
+    companion object {
+        private val logger = getLogger<LobbyApi>()
+    }
+
     @GetMapping("/players") fun getPlayers(response: HttpServletResponse): Any? {
         if (player.lobby == null) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on GET /lobby/players")
         }
         return player.lobby
     }
@@ -22,6 +28,7 @@ class LobbyApi(
         val lobby: Lobby? = player.lobby
         if (lobby == null) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on GET /lobby/game")
             return null
         }
         val isQuadsRemoved = player.isQuadsRemoved
@@ -36,6 +43,7 @@ class LobbyApi(
         val lobby: Lobby? = player.lobby
         if (lobby == null) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on GET /lobby/messages")
             return null
         }
         return hashMapOf("messages".to(lobby.messages))
@@ -44,6 +52,7 @@ class LobbyApi(
     @PostMapping("/message") fun postMessage(@RequestParam("text") text: String, response: HttpServletResponse) {
         if (!player.addMessage(text)) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on POST /lobby/message")
         }
     }
 
@@ -52,6 +61,7 @@ class LobbyApi(
                                                 response: HttpServletResponse) {
         if (!player.markMessage(number, isMarked)) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on POST /lobby/mark")
         }
     }
 
@@ -60,18 +70,21 @@ class LobbyApi(
                                                 response: HttpServletResponse) {
         if (!player.addQuad(number, color)) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on POST /lobby/quad")
         }
     }
 
     @DeleteMapping("/quad/{number}") fun deleteQuad(@PathVariable number: Int, response: HttpServletResponse) {
         if (!player.removeQuad(number)) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on DELETE /lobby/quad")
         }
     }
 
     @DeleteMapping("/quads") fun deleteQuads(response: HttpServletResponse) {
         if (!player.removeQuads()) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on DELETE /lobby/quads")
         }
     }
 
@@ -79,6 +92,7 @@ class LobbyApi(
         val keyword: String? = player.requestKeyword()
         if (keyword == null) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on GET /lobby/keyword")
             return null
         }
         return hashMapOf("keyword".to(keyword))

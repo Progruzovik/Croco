@@ -1,6 +1,7 @@
 package net.progruzovik.study.croco.api
 
 import net.progruzovik.study.croco.game.Player
+import net.progruzovik.study.croco.getLogger
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
@@ -9,6 +10,10 @@ import javax.servlet.http.HttpServletResponse
 @RequestMapping("/api/player")
 class PlayerApi(
         private val player: Player) {
+
+    companion object {
+        private val logger = getLogger<PlayerApi>()
+    }
 
     @GetMapping("/id") fun getId(): Any {
         return hashMapOf("id".to(player.id))
@@ -29,12 +34,14 @@ class PlayerApi(
     @PostMapping("/queue") fun postQueue(response: HttpServletResponse) {
         if (!player.addToQueue()) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on POST /player/queue")
         }
     }
 
     @DeleteMapping("/queue") fun deleteQueue(response: HttpServletResponse) {
         if (!player.removeFromQueue()) {
             response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on DELETE /player/queue")
         }
     }
 }
