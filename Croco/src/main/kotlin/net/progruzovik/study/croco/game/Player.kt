@@ -11,6 +11,9 @@ interface Player {
     var lobby: Lobby?
     var isQuadsRemoved: Boolean
 
+    fun addToQueue(): Boolean
+    fun removeFromQueue(): Boolean
+
     fun addMessage(text: String): Boolean
     fun markMessage(number: Int, isMarked: Boolean?): Boolean
 

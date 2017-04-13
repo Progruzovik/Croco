@@ -10,6 +10,10 @@ class MockPlayer(
     override var lobby: Lobby? = null
     override var isQuadsRemoved: Boolean = false
 
+    override fun addToQueue(): Boolean = false
+
+    override fun removeFromQueue(): Boolean = false
+
     override fun addMessage(text: String): Boolean {
         return lobby?.addMessage(this, text) ?: false
     }

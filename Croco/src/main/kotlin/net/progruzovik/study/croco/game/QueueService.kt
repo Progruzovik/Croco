@@ -14,10 +14,9 @@ class QueueService(
     private var lastLobby: Lobby? = null
 
     override fun addPlayer(player: Player): Boolean {
-        val nextPainter: Player? = queuedPlayer
-        if (nextPainter != player) {
+        if (queuedPlayer != player) {
             if (lastLobby?.addGuesser(player) != true) {
-                if (nextPainter == null) {
+                if (queuedPlayer == null) {
                     queuedPlayer = player
                     lastLobby = null
                     player.role = Role.QUEUED
