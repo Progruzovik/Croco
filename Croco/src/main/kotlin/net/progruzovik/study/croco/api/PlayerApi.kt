@@ -10,7 +10,8 @@ import javax.servlet.http.HttpServletResponse
 @RestController
 @RequestMapping("/api/player")
 class PlayerApi(
-        private val queue: Queue, private val player: Player) {
+        private val queue: Queue,
+        private val player: Player) {
 
     companion object {
         private val logger = getLogger<PlayerApi>()
