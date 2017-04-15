@@ -54,8 +54,7 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     override fun addMessage(player: Player, text: String): Boolean {
         if (guessers.contains(player) && winner == null) {
             messages.add(Message(messages.size, player.name, text))
-            text.toLowerCase()
-            if (text.replace('ё', 'е') == keyword) {
+            if (text.toLowerCase().replace('ё', 'е') == keyword) {
                 painter.role = Role.IDLER
                 guessers.forEach {
                     it.role = if (it == player) Role.WINNER else Role.IDLER
