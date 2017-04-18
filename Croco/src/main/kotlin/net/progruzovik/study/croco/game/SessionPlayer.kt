@@ -30,6 +30,9 @@ open class SessionPlayer(session: HttpSession,
     }
 
     @PreDestroy fun clear() {
+        if (role == Role.QUEUED) {
+            queueService.removePlayer(this)
+        }
         logger.debug("Player with id = $id gone")
     }
 
