@@ -1,6 +1,7 @@
 package net.progruzovik.study.croco.game
 
 import junit.framework.TestCase.*
+import net.progruzovik.study.croco.data.Role
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -104,5 +105,16 @@ class LobbyTest {
 
     @Test fun requestKeyword() {
         assertNull(lobby.requestKeyword(guesser))
+    }
+
+    @Test fun close() {
+        lobby.close(guesser)
+        assertEquals(painter, lobby.painter)
+        assertEquals(painter.role, Role.PAINTER)
+        assertEquals(guesser.role, Role.GUESSER)
+        lobby.close(painter)
+        assertNull(lobby.painter)
+        assertEquals(painter.role, Role.IDLER)
+        assertEquals(guesser.role, Role.IDLER)
     }
 }

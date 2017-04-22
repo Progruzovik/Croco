@@ -32,11 +32,18 @@ open class SessionPlayer(session: HttpSession,
     @PreDestroy fun clear() {
         if (role == Role.QUEUED) {
             queueService.removePlayer(this)
+        } else if (role == Role.PAINTER) {
+            lobby?.close(this)
         }
         logger.debug("Player with id = $id gone")
     }
 
-    override fun addToQueue(): Boolean = queueService.addPlayer(this)
+    override fun addToQueue(): Boolean {
+        if (role == Role.PAINTER) {
+            lobby?.close(this)
+        }
+        return queueService.addPlayer(this)
+    }
 
     override fun removeFromQueue(): Boolean = queueService.removePlayer(this)
 

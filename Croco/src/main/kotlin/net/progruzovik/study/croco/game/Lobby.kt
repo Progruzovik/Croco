@@ -8,7 +8,7 @@ interface Lobby {
     /**
      * Художник.
      */
-    val painter: Player
+    val painter: Player?
 
     /**
      * Список угадывающих игроков.
@@ -84,4 +84,10 @@ interface Lobby {
      * @return ключевое слово или null, если у игрока нет доступа нему.
      */
     fun requestKeyword(player: Player): String?
+
+    /**
+     * Отправляет запрос на закрытие лобби.
+     * @param player игрок, который отправляет запрос.
+     */
+    fun close(player: Player)
 }
