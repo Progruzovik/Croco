@@ -93,14 +93,7 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
 
     override fun removeQuad(player: Player, number: Int): Boolean {
         if (player == painter && isRunning && number > -1 && number < QUADS_NUMBER) {
-            val iterator: MutableIterator<Quad> = quads.iterator()
-            var isRemoved: Boolean = false
-            while (iterator.hasNext() && !isRemoved) {
-                if (iterator.next().number == number) {
-                    iterator.remove()
-                    isRemoved = true
-                }
-            }
+            quads.removeIf { it.number == number }
             painter?.isQuadsRemoved = true
             guessers.forEach { it.isQuadsRemoved = true }
             return true
