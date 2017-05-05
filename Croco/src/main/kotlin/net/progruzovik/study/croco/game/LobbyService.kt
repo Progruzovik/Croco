@@ -31,7 +31,7 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     private val startTime = LocalTime.now()
 
     companion object {
-        private const val SIZE = 5
+        private const val GUESSERS_NUMBER = 5
         private const val QUADS_NUMBER = 400
         private const val COLORS_NUMBER = 13
     }
@@ -43,7 +43,7 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     }
 
     override fun addGuesser(guesser: Player): Boolean {
-        if (painter != guesser && !guessers.contains(guesser) && guessers.size < SIZE
+        if (painter != guesser && !guessers.contains(guesser) && guessers.size < GUESSERS_NUMBER
                 && isRunning && abs(between(startTime, LocalTime.now()).toMinutes()) < 1) {
             guesser.role = Role.GUESSER
             guesser.isQuadsRemoved = true
