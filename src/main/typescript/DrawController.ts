@@ -1,4 +1,4 @@
-export class DrawController {
+export default class DrawController {
 
     private static readonly CELL_LENGTH = 10;
 
