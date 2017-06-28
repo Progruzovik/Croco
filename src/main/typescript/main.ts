@@ -1,2 +1,2 @@
 /// <reference path="../../../node_modules/@types/requirejs/index.d.ts" />
-require(["Stage"], (App) => { App.Stage.run() });
+require(["Stage"], (App) => new App.Stage());
