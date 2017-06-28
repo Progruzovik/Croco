@@ -1,10 +1,8 @@
+.idea/
+.gradle/
+build/
+node_modules/
+js/
+
 application.properties
 data.sql
-build/
-
-.idea/
-*.iws
-*.iml
-*.ipr
-
-.gradle/
