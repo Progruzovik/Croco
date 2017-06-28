@@ -1,22 +1,22 @@
 import * as $ from "jquery";
-import DrawController from "./DrawController";
+import ContextDrawer from "./ContextDrawer";
 
 enum Role { Idler, Queued, Guesser, Painter, Winner }
 
-export namespace Stage {
+export namespace Hub {
 
     const DELETE = "DELETE";
 
     let role: Role;
-    let drawController: DrawController;
+    let drawer: ContextDrawer;
 
     export function init() {
         $.getJSON("/api/player/name", (data: any) => $("#inputName").val(data.name));
         $("#btnQueue").click(onBtnQueueClick);
         const canvas = $("#canvas") as JQuery<HTMLCanvasElement>;
-        drawController = new DrawController(canvas[0].getContext("2d"));
+        drawer = new ContextDrawer(canvas[0].getContext("2d"));
         canvas.click((e: JQuery.Event) =>
-            drawController.addQuad(e.pageX - canvas.offset().left, e.pageY - canvas.offset().top));
+            drawer.addQuad(e.pageX - canvas.offset().left, e.pageY - canvas.offset().top));
         $("#btnMessage").click(() => alert("Message sent!"));
 
         setInterval(onUpdated, 500);
