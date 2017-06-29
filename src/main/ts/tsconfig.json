@@ -3,6 +3,7 @@
     "target": "es5",
     "lib" : ["ES2015", "DOM.Iterable"],
     "module": "amd",
+    "removeComments": true,
     "outFile": "../resources/static/js/app.js"
   }
 }

@@ -1,2 +1,3 @@
 DROP TABLE IF EXISTS keyword;
 CREATE TABLE keyword(value VARCHAR(30) PRIMARY KEY);
+INSERT INTO keyword VALUES ('car');

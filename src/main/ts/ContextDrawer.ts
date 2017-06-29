@@ -1,30 +1,41 @@
 export default class ContextDrawer {
 
-    private static readonly QUADS_ON_SIDE = 40;
+    static readonly COLORS = ["#000000", "#964b00", "#9b2d30", "#ff0000", "#ffc0cb",
+        "#ffa500", "#ffff00", "#90ee90", "#008000", "#42aaff", "#0000ff", "#30d5c8", "#8b00ff"];
+    static readonly QUADS_ON_SIDE = 20;
 
-    private readonly quadLength: number;
+    readonly quadLength: number;
 
-    constructor(canvasLength: number,
-                private readonly context: CanvasRenderingContext2D)
-    {
+    constructor(private readonly canvasLength: number,
+                private readonly context: CanvasRenderingContext2D) {
         this.quadLength = canvasLength / ContextDrawer.QUADS_ON_SIDE;
-
-        context.globalAlpha = 0.2;
-        for (let i: number = 0; i <= ContextDrawer.QUADS_ON_SIDE; i++) {
-            context.beginPath();
-            context.moveTo(i * this.quadLength, 0);
-            context.lineTo(i * this.quadLength, canvasLength);
-            context.stroke();
-
-            context.beginPath();
-            context.moveTo(0, i * this.quadLength);
-            context.lineTo(canvasLength, i * this.quadLength);
-            context.stroke();
-        }
-        context.globalAlpha = 1;
+        this.drawGrid();
     }
 
-    addQuad(x: number, y: number) {
-        this.context.fillRect(x - x % this.quadLength, y - y % this.quadLength, this.quadLength, this.quadLength);
+    drawQuad(x: number, y: number, color: number) {
+        this.context.fillStyle = ContextDrawer.COLORS[color];
+        this.context.fillRect(x, y, this.quadLength, this.quadLength);
+    }
+
+    clear() {
+        this.context.clearRect(0, 0, this.canvasLength, this.canvasLength);
+        this.drawGrid();
+    }
+
+    private drawGrid() {
+        this.context.globalAlpha = 0.2;
+        this.context.fillStyle = "#000000";
+        for (let i: number = 0; i <= ContextDrawer.QUADS_ON_SIDE; i++) {
+            this.context.beginPath();
+            this.context.moveTo(i * this.quadLength, 0);
+            this.context.lineTo(i * this.quadLength, this.canvasLength);
+            this.context.stroke();
+
+            this.context.beginPath();
+            this.context.moveTo(0, i * this.quadLength);
+            this.context.lineTo(this.canvasLength, i * this.quadLength);
+            this.context.stroke();
+        }
+        this.context.globalAlpha = 1;
     }
 }
