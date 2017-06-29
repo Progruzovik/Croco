@@ -1,4 +1,5 @@
 import * as $ from "jquery";
+import Chat from "./Chat";
 import ContextDrawer from "./ContextDrawer";
 
 enum Role { Idler, Queued, Guesser, Painter, Winner }
@@ -8,11 +9,13 @@ export namespace Hub {
     const DELETE = "delete";
 
     let role: Role;
+    const inputName = $("#inputName")[0] as HTMLInputElement;
     const canvas = $("#canvas") as JQuery<HTMLCanvasElement>;
     const drawer = new ContextDrawer(canvas.width(), canvas[0].getContext("2d"));
+    const chat = new Chat($("#divChat"));
 
     export function init() {
-        $.getJSON("/api/player/name", (data: any) => $("#inputName").val(data.name));
+        $.getJSON("/api/player/name", (data: any) => inputName.value = data.name);
         $("#btnQueue").click(onBtnQueueClick);
         canvas.mousemove(false);
         canvas.click(onCanvasClick);
@@ -36,7 +39,9 @@ export namespace Hub {
                 ($("#btnClear")[0] as HTMLButtonElement).disabled = role != Role.Painter;
             }
             if (role == Role.Guesser) {
-                $.getJSON("/api/lobby/game", updateDrawer);
+                $.getJSON("/api/lobby/game", updateGame);
+            } else if (role == Role.Painter) {
+                $.getJSON("api/lobby/messages", (data : { messages: string[] }) => updateChat(data.messages));
             }
         });
     }
@@ -45,7 +50,7 @@ export namespace Hub {
         if (role == Role.Queued) {
             $.ajax("/api/player/queue", { method: DELETE });
         } else {
-            $.post("/api/player/name", "value=" + $("#inputName").val());
+            $.post("/api/player/name", "value=" + inputName.value);
             $.post("/api/player/queue");
         }
     }
@@ -65,10 +70,15 @@ export namespace Hub {
     function onFormMessageSubmit(e: JQuery.Event) {
         e.preventDefault();
         const input = $("#inputMessage")[0] as HTMLInputElement;
-        $.post("/api/lobby/message", "text=" + input.value, () => input.value = null);
+        if (input.value.length > 0) {
+            $.post("/api/lobby/message", "text=" + input.value, () => {
+                chat.addMessage(inputName.value, input.value);
+                input.value = null;
+            });
+        }
     }
 
-    function updateDrawer(
+    function updateGame(
         data: { messages: any[], quads: { number: number, color: number }[], quadsRemoved: boolean }) {
         if (data.quadsRemoved) {
             drawer.clear();
@@ -77,6 +87,14 @@ export namespace Hub {
             const quadX: number = quad.number % ContextDrawer.QUADS_ON_SIDE * drawer.quadLength;
             const quadY: number = Math.floor(quad.number / ContextDrawer.QUADS_ON_SIDE) * drawer.quadLength;
             drawer.drawQuad(quadX, quadY, quad.color);
+        }
+        updateChat(data.messages);
+    }
+
+    function updateChat(messages: any[]) {
+        chat.clear();
+        for (const message of messages) {
+            chat.addMessage(message.sender, message.text);
         }
     }
 }

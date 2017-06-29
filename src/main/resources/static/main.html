@@ -10,47 +10,57 @@
 
 <body>
 
-<h3>
-    <label for="inputName">Name:</label>
-    <input type="text" id="inputName" />
-    <br />
-    <b id="txtStatus"></b>
-    <br />
-    <button id="btnQueue"></button>
-</h3>
-
 <table>
+    <tbody>
     <tr>
         <td>
-            <canvas width="400" height="400" id="canvas"></canvas>
+            <h3>
+                <label for="inputName">Name:</label>
+                <input type="text" id="inputName" />
+                <br />
+                <b id="txtStatus"></b>
+                <br />
+                <button id="btnQueue"></button>
+            </h3>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <canvas id="canvas" width="400" height="400"></canvas>
         </td>
         <td>
-            <table>...</table>
+            <div id="divChat" style="width: 300px; height: 400px; overflow-y: scroll;"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="selectColor">Color:</label>
+            <select id="selectColor">
+                <option>Black</option>
+                <option>Brown</option>
+                <option>Dark red</option>
+                <option>Red</option>
+                <option>Pink</option>
+                <option>Orange</option>
+                <option>Yellow</option>
+                <option>Light green</option>
+                <option>Green</option>
+                <option>Light blue</option>
+                <option>Blue</option>
+                <option>Turquoise</option>
+                <option>Purple</option>
+            </select>
+            <button id="btnClear">Clear canvas</button>
+        </td>
+        <td>
             <form id="formMessage">
                 <input type="text" id="inputMessage" title="Message" placeholder="Enter message" />
                 <input type="submit" id="btnMessage" value="Send" />
             </form>
         </td>
     </tr>
+    </tbody>
 </table>
-
-<label for="selectColor">Color:</label>
-<select id="selectColor">
-    <option>Black</option>
-    <option>Brown</option>
-    <option>Dark red</option>
-    <option>Red</option>
-    <option>Pink</option>
-    <option>Orange</option>
-    <option>Yellow</option>
-    <option>Light green</option>
-    <option>Green</option>
-    <option>Light blue</option>
-    <option>Blue</option>
-    <option>Turquoise</option>
-    <option>Purple</option>
-</select>
-<button id="btnClear">Clear canvas</button>
 
 </body>
 </html>
