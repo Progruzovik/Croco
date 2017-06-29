@@ -79,7 +79,7 @@ export namespace Hub {
     }
 
     function updateGame(
-        data: { messages: any[], quads: { number: number, color: number }[], quadsRemoved: boolean }) {
+        data: { quadsRemoved: boolean, quads: { number: number, color: number }[], messages: any[] }) {
         if (data.quadsRemoved) {
             drawer.clear();
         }

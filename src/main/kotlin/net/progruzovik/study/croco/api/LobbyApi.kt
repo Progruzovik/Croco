@@ -34,9 +34,32 @@ class LobbyApi(
         val isQuadsRemoved = player.isQuadsRemoved
         player.isQuadsRemoved = false
         return hashMapOf(
-                "messages".to(lobby.messages),
+                "quadsRemoved".to(isQuadsRemoved),
                 "quads".to(lobby.quads),
-                "quadsRemoved".to(isQuadsRemoved))
+                "messages".to(lobby.messages))
+    }
+
+    @PostMapping("/quad/{number}") fun postQuad(@PathVariable number: Int,
+                                                @RequestParam("color") color: Int,
+                                                response: HttpServletResponse) {
+        if (!player.addQuad(number, color)) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on POST /lobby/quad")
+        }
+    }
+
+    @DeleteMapping("/quad/{number}") fun deleteQuad(@PathVariable number: Int, response: HttpServletResponse) {
+        if (!player.removeQuad(number)) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on DELETE /lobby/quad")
+        }
+    }
+
+    @DeleteMapping("/quads") fun deleteQuads(response: HttpServletResponse) {
+        if (!player.removeQuads()) {
+            response.status = HttpStatus.BAD_REQUEST.value()
+            logger.debug("Bad Request on DELETE /lobby/quads")
+        }
     }
 
     @GetMapping("/messages") fun getMessages(response: HttpServletResponse): Any? {
@@ -62,29 +85,6 @@ class LobbyApi(
         if (!player.markMessage(number, isMarked)) {
             response.status = HttpStatus.BAD_REQUEST.value()
             logger.debug("Bad Request on POST /lobby/mark")
-        }
-    }
-
-    @PostMapping("/quad/{number}") fun postQuad(@PathVariable number: Int,
-                                                @RequestParam("color") color: Int,
-                                                response: HttpServletResponse) {
-        if (!player.addQuad(number, color)) {
-            response.status = HttpStatus.BAD_REQUEST.value()
-            logger.debug("Bad Request on POST /lobby/quad")
-        }
-    }
-
-    @DeleteMapping("/quad/{number}") fun deleteQuad(@PathVariable number: Int, response: HttpServletResponse) {
-        if (!player.removeQuad(number)) {
-            response.status = HttpStatus.BAD_REQUEST.value()
-            logger.debug("Bad Request on DELETE /lobby/quad")
-        }
-    }
-
-    @DeleteMapping("/quads") fun deleteQuads(response: HttpServletResponse) {
-        if (!player.removeQuads()) {
-            response.status = HttpStatus.BAD_REQUEST.value()
-            logger.debug("Bad Request on DELETE /lobby/quads")
         }
     }
 

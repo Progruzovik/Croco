@@ -21,8 +21,8 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     override var winner: Player? = null
         private set
 
-    @JsonIgnore override val messages = ArrayList<Message>()
     @JsonIgnore override val quads = LinkedList<Quad>()
+    @JsonIgnore override val messages = ArrayList<Message>()
 
     private val isRunning: Boolean
         get() = painter != null && winner == null
@@ -49,29 +49,6 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
             guesser.isQuadsRemoved = true
             guesser.lobby = this
             guessers.add(guesser)
-            return true
-        }
-        return false
-    }
-
-    override fun addMessage(player: Player, text: String): Boolean {
-        if (guessers.contains(player) && isRunning) {
-            messages.add(Message(messages.size, player.name, text))
-            if (text.toLowerCase().replace('ё', 'е') == keyword) {
-                painter?.role = Role.IDLER
-                guessers.forEach {
-                    it.role = if (it == player) Role.WINNER else Role.IDLER
-                }
-                winner = player
-            }
-            return true
-        }
-        return false
-    }
-
-    override fun markMessage(player: Player, number: Int, isMarked: Boolean?): Boolean {
-        if (player == painter && isRunning && number < messages.size) {
-            messages[number].isMarked = isMarked
             return true
         }
         return false
@@ -106,6 +83,29 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
             quads.clear()
             painter?.isQuadsRemoved = true
             guessers.forEach { it.isQuadsRemoved = true }
+            return true
+        }
+        return false
+    }
+
+    override fun addMessage(player: Player, text: String): Boolean {
+        if (guessers.contains(player) && isRunning) {
+            messages.add(Message(messages.size, player.name, text))
+            if (text.toLowerCase().replace('ё', 'е') == keyword) {
+                painter?.role = Role.IDLER
+                guessers.forEach {
+                    it.role = if (it == player) Role.WINNER else Role.IDLER
+                }
+                winner = player
+            }
+            return true
+        }
+        return false
+    }
+
+    override fun markMessage(player: Player, number: Int, isMarked: Boolean?): Boolean {
+        if (player == painter && isRunning && number < messages.size) {
+            messages[number].isMarked = isMarked
             return true
         }
         return false

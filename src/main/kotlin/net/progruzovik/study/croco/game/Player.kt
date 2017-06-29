@@ -42,21 +42,6 @@ interface Player {
     fun removeFromQueue(): Boolean
 
     /**
-     * Добавляет сообщение.
-     * @param text текст сообщения.
-     * @return успешность операции.
-     */
-    fun addMessage(text: String): Boolean
-
-    /**
-     * Отмечает сообщение.
-     * @param number номер сообщения.
-     * @param isMarked вид метки.
-     * @return успешность операции.
-     */
-    fun markMessage(number: Int, isMarked: Boolean?): Boolean
-
-    /**
      * Добавляет квадрат.
      * @param number номер квадрата.
      * @param color цвет квадрата.
@@ -76,6 +61,21 @@ interface Player {
      * @return успешность операции.
      */
     fun removeQuads(): Boolean
+
+    /**
+     * Добавляет сообщение.
+     * @param text текст сообщения.
+     * @return успешность операции.
+     */
+    fun addMessage(text: String): Boolean
+
+    /**
+     * Отмечает сообщение.
+     * @param number номер сообщения.
+     * @param isMarked вид метки.
+     * @return успешность операции.
+     */
+    fun markMessage(number: Int, isMarked: Boolean?): Boolean
 
     /**
      * Ставит игрока в очередь.

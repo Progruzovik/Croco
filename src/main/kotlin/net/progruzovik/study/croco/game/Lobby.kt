@@ -21,14 +21,14 @@ interface Lobby {
     val winner: Player?
 
     /**
-     * Список сообщений.
-     */
-    val messages: List<Message>
-
-    /**
      * Список нарисованных квадратов.
      */
     val quads: List<Quad>
+
+    /**
+     * Список сообщений.
+     */
+    val messages: List<Message>
 
     /**
      * Добавляет угадывающего игрока.
@@ -36,23 +36,6 @@ interface Lobby {
      * @return успешность операции.
      */
     fun addGuesser(guesser: Player): Boolean
-
-    /**
-     * Добавляет сообщение.
-     * @param player игрок, который добавляет сообщение.
-     * @param text текст сообщения.
-     * @return успешность операции.
-     */
-    fun addMessage(player: Player, text: String): Boolean
-
-    /**
-     * Отмечает сообщение.
-     * @param player игрок, который отмечает сообщение.
-     * @param number номер сообщения.
-     * @param isMarked вид метки.
-     * @return успешность операции.
-     */
-    fun markMessage(player: Player, number: Int, isMarked: Boolean?): Boolean
 
     /**
      * Добавляет квадрат.
@@ -77,6 +60,23 @@ interface Lobby {
      * @return успешность операции.
      */
     fun removeQuads(player: Player): Boolean
+
+    /**
+     * Добавляет сообщение.
+     * @param player игрок, который добавляет сообщение.
+     * @param text текст сообщения.
+     * @return успешность операции.
+     */
+    fun addMessage(player: Player, text: String): Boolean
+
+    /**
+     * Отмечает сообщение.
+     * @param player игрок, который отмечает сообщение.
+     * @param number номер сообщения.
+     * @param isMarked вид метки.
+     * @return успешность операции.
+     */
+    fun markMessage(player: Player, number: Int, isMarked: Boolean?): Boolean
 
     /**
      * Заправшивает ключевое слово.

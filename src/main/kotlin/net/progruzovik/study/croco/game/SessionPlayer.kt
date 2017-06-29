@@ -47,14 +47,6 @@ open class SessionPlayer(session: HttpSession,
 
     override fun removeFromQueue(): Boolean = queueService.removePlayer(this)
 
-    override fun addMessage(text: String): Boolean {
-        return lobby?.addMessage(this, text) ?: false
-    }
-
-    override fun markMessage(number: Int, isMarked: Boolean?): Boolean {
-        return lobby?.markMessage(this, number, isMarked) ?: false
-    }
-
     override fun addQuad(number: Int, color: Int): Boolean {
         return lobby?.addQuad(this, number, color) ?: false
     }
@@ -65,6 +57,14 @@ open class SessionPlayer(session: HttpSession,
 
     override fun removeQuads(): Boolean {
         return lobby?.removeQuads(this) ?: false
+    }
+
+    override fun addMessage(text: String): Boolean {
+        return lobby?.addMessage(this, text) ?: false
+    }
+
+    override fun markMessage(number: Int, isMarked: Boolean?): Boolean {
+        return lobby?.markMessage(this, number, isMarked) ?: false
     }
 
     override fun requestKeyword(): String? = lobby?.requestKeyword(this)
