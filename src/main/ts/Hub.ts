@@ -14,7 +14,7 @@ export namespace Hub {
         $.getJSON("/api/player/name", (data: any) => $("#inputName").val(data.name));
         $("#btnQueue").click(onBtnQueueClick);
         const canvas = $("#canvas") as JQuery<HTMLCanvasElement>;
-        drawer = new ContextDrawer(canvas[0].getContext("2d"));
+        drawer = new ContextDrawer(canvas.width(), canvas[0].getContext("2d"));
         canvas.click((e: JQuery.Event) =>
             drawer.addQuad(e.pageX - canvas.offset().left, e.pageY - canvas.offset().top));
         $("#btnMessage").click(() => alert("Message sent!"));
