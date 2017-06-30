@@ -41,7 +41,7 @@ export namespace Hub {
             if (role == Role.Guesser) {
                 $.getJSON("/api/lobby/game", updateGame);
             } else if (role == Role.Painter) {
-                $.getJSON("api/lobby/messages", (data : { messages: string[] }) => updateChat(data.messages));
+                $.getJSON("api/lobby/messages", (data : { messages: any[] }) => updateChat(data.messages));
             }
         });
     }
@@ -72,7 +72,8 @@ export namespace Hub {
         const input = $("#inputMessage")[0] as HTMLInputElement;
         if (input.value.length > 0) {
             $.post("/api/lobby/message", "text=" + input.value, () => {
-                chat.addMessage(inputName.value, input.value);
+                setUpMessage(inputName.value, input.value);
+                chat.scrollBottom();
                 input.value = null;
             });
         }
@@ -91,10 +92,32 @@ export namespace Hub {
         updateChat(data.messages);
     }
 
-    function updateChat(messages: any[]) {
-        chat.clear();
-        for (const message of messages) {
-            chat.addMessage(message.sender, message.text);
+    function updateChat(messages: { number: number, sender: string, text: string, marked: boolean }[]) {
+        if (role == Role.Painter) {
+            messages = messages.splice(chat.messagesNumber);
+        } else {
+            chat.clear();
+        }
+        if (messages.length > 0) {
+            for (const message of messages) {
+                setUpMessage(message.sender, message.text, message.number, message.marked);
+            }
+            if (role == Role.Painter) {
+                chat.scrollBottom();
+            }
+        }
+    }
+
+    function setUpMessage(sender: string, text: string, number: number = -1, isMarked: boolean = null) {
+        const withRadio: boolean = role == Role.Painter;
+        number = chat.addMessage(number, sender, text, withRadio, isMarked);
+        if (number != -1 && withRadio) {
+            const radioPlus = $('#' + Chat.RADIO_PLUS + number) as JQuery<HTMLInputElement>;
+            radioPlus[0].checked = isMarked == true;
+            radioPlus.click(() => $.post("/api/lobby/mark/" + number, "marked=1"));
+            const radioMinus = $('#' + Chat.RADIO_MINUS + number) as JQuery<HTMLInputElement>;
+            radioMinus[0].checked = isMarked == false;
+            radioMinus.click(() => $.post("/api/lobby/mark/" + number, "marked=0"));
         }
     }
 }
