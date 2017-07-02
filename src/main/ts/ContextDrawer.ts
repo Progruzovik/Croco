@@ -5,11 +5,35 @@ export default class ContextDrawer {
     static readonly QUADS_ON_SIDE = 20;
 
     readonly quadLength: number;
+    private _isMouseDown: boolean = false;
+    private readonly recordedQuads = new Set<number>();
 
     constructor(private readonly canvasLength: number,
                 private readonly context: CanvasRenderingContext2D) {
         this.quadLength = canvasLength / ContextDrawer.QUADS_ON_SIDE;
         this.drawGrid();
+    }
+
+    get isMouseDown(): boolean {
+        return this._isMouseDown;
+    }
+
+    set isMouseDown(value: boolean) {
+        if (this._isMouseDown != value) {
+            this._isMouseDown = value;
+            if (!this._isMouseDown) {
+                this.recordedQuads.clear();
+            }
+        }
+    }
+
+    checkQuadRecorded(number: number): boolean {
+        return this.recordedQuads.has(number);
+    }
+
+    recordQuad(number: number, x: number, y: number, color: number) {
+        this.recordedQuads.add(number);
+        this.drawQuad(x, y, color);
     }
 
     drawQuad(x: number, y: number, color: number) {
