@@ -53,7 +53,6 @@ export default class Chat {
     }
 
     clear() {
-        console.log("chat cleared");
         this._messagesNumber = 0;
         this.div.html(null);
     }

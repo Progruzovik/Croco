@@ -1,8 +1,8 @@
 export default class DrawArea {
 
-    static readonly COLORS = ["#000000", "#964b00", "#9b2d30", "#ff0000", "#ffc0cb",
-        "#ffa500", "#ffff00", "#90ee90", "#008000", "#42aaff", "#0000ff", "#30d5c8", "#8b00ff"];
     static readonly QUADS_ON_SIDE = 20;
+    private static readonly COLORS = ["#000000", "#964b00", "#9b2d30", "#ff0000", "#ffc0cb", "#ffa500",
+        "#ffff00", "#90ee90", "#008000", "#42aaff", "#0000ff", "#30d5c8", "#8b00ff", "#ffffff"];
 
     readonly quadLength: number;
     private _isMouseDown: boolean = false;
@@ -36,12 +36,12 @@ export default class DrawArea {
 
     recordQuad(number: number, x: number, y: number) {
         this.recordedQuads.add(number);
-        this.drawQuad(x, y);
+        this.drawQuad(x, y, this.selectColor.selectedIndex);
     }
 
-    drawQuad(x: number, y: number, color: number = this.selectColor.selectedIndex) {
+    drawQuad(x: number, y: number, color: number) {
         this.context.fillStyle = DrawArea.COLORS[color];
-        this.context.fillRect(x, y, this.quadLength, this.quadLength);
+        this.context.fillRect(x + 1, y + 1, this.quadLength - 2, this.quadLength - 2);
     }
 
     clear() {
@@ -50,8 +50,7 @@ export default class DrawArea {
     }
 
     private drawGrid() {
-        this.context.globalAlpha = 0.2;
-        this.context.fillStyle = "#000000";
+        this.context.fillStyle = DrawArea.COLORS[0];
         for (let i: number = 0; i <= DrawArea.QUADS_ON_SIDE; i++) {
             this.context.beginPath();
             this.context.moveTo(i * this.quadLength, 0);
@@ -63,6 +62,5 @@ export default class DrawArea {
             this.context.lineTo(this.canvas.width(), i * this.quadLength);
             this.context.stroke();
         }
-        this.context.globalAlpha = 1;
     }
 }

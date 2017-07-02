@@ -82,8 +82,13 @@ export namespace Hub {
             const quadY: number = y - y % drawArea.quadLength;
             const number: number = quadX / drawArea.quadLength + quadY / drawArea.quadLength * DrawArea.QUADS_ON_SIDE;
             if (!drawArea.checkQuadRecorded(number)) {
-                $.post("/api/lobby/quad/" + number, "color=" + drawArea.selectColor.selectedIndex,
-                    () => drawArea.recordQuad(number, quadX, quadY));
+                if (drawArea.selectColor.selectedIndex == drawArea.selectColor.length - 1) {
+                    $.ajax("/api/lobby/quad/" + number,
+                        { method: DELETE, success: () => drawArea.recordQuad(number, quadX, quadY) });
+                } else {
+                    $.post("/api/lobby/quad/" + number, "color=" + drawArea.selectColor.selectedIndex,
+                        () => drawArea.recordQuad(number, quadX, quadY));
+                }
             }
         }
         return false;
