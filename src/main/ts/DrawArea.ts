@@ -5,7 +5,19 @@ export default class DrawArea {
         "#ffff00", "#90ee90", "#008000", "#42aaff", "#0000ff", "#30d5c8", "#8b00ff", "#ffffff"];
 
     readonly quadLength: number;
+
     private _isMouseDown: boolean = false;
+    get isMouseDown(): boolean {
+        return this._isMouseDown;
+    }
+    set isMouseDown(value: boolean) {
+        if (this._isMouseDown != value) {
+            this._isMouseDown = value;
+            if (!this._isMouseDown) {
+                this.recordedQuads.clear();
+            }
+        }
+    }
 
     private readonly recordedQuads = new Set<number>();
     private readonly context: CanvasRenderingContext2D;
@@ -15,19 +27,6 @@ export default class DrawArea {
         this.quadLength = canvas.width() / DrawArea.QUADS_ON_SIDE;
         this.context = canvas[0].getContext("2d");
         this.drawGrid();
-    }
-
-    get isMouseDown(): boolean {
-        return this._isMouseDown;
-    }
-
-    set isMouseDown(value: boolean) {
-        if (this._isMouseDown != value) {
-            this._isMouseDown = value;
-            if (!this._isMouseDown) {
-                this.recordedQuads.clear();
-            }
-        }
     }
 
     checkQuadRecorded(number: number): boolean {

@@ -6,12 +6,11 @@ export default class Chat {
     private static readonly RADIO_MINUS = "radioMinus";
 
     private _messagesNumber: number = 0;
-
-    constructor(private readonly div: JQuery<HTMLElement>) {}
-
     get messagesNumber(): number {
         return this._messagesNumber;
     }
+
+    constructor(private readonly div: JQuery<HTMLElement>) {}
 
     scrollBottom() {
         this.div.scrollTop(this.div[0].scrollHeight);
