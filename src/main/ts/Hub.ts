@@ -40,10 +40,15 @@ export namespace Hub {
                 }
             }
             if (role != data.roleCode) {
-                if (role == Role.Painter || role == Role.Guesser) {
-                    $.getJSON("/api/lobby/players", updatePlayers);
-                }
                 role = data.roleCode;
+                if (role == Role.Painter || role == Role.Guesser) {
+                    chat.clear();
+                    $.getJSON("/api/lobby/game", updateGame);
+                    if (role == Role.Painter) {
+                        $.getJSON("/api/lobby/keyword", (data: { readonly keyword: string }) =>
+                            $("#divKeyword").html("<b>Keyword: </b>" + data.keyword));
+                    }
+                }
                 $("#txtStatus").html("Role: " + Role[role]);
                 $("#btnQueue").html(role == Role.Queued ? "Get out of queue" : "Get in queue");
                 ($("#inputMessage")[0] as HTMLInputElement).disabled = role != Role.Guesser;

@@ -4,7 +4,6 @@ export default class Chat {
 
     private static readonly RADIO_PLUS = "radioPlus";
     private static readonly RADIO_MINUS = "radioMinus";
-    private static readonly MARK = "mark";
 
     private _messagesNumber: number = 0;
 
@@ -54,6 +53,7 @@ export default class Chat {
     }
 
     clear() {
+        console.log("chat cleared");
         this._messagesNumber = 0;
         this.div.html(null);
     }

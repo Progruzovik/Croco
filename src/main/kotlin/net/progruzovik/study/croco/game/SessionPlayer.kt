@@ -19,7 +19,7 @@ open class SessionPlayer(session: HttpSession,
 
     @JsonIgnore override var role = Role.IDLER
     @JsonIgnore override var lobby: Lobby? = null
-    @JsonIgnore override var isQuadsRemoved: Boolean = false
+    @JsonIgnore override var isQuadsRemoved: Boolean = true
 
     companion object {
         private val logger = getLogger<SessionPlayer>()
