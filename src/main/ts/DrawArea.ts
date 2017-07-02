@@ -41,7 +41,8 @@ export default class DrawArea {
 
     drawQuad(x: number, y: number, color: number) {
         this.context.fillStyle = DrawArea.COLORS[color];
-        this.context.fillRect(x + 1, y + 1, this.quadLength - 2, this.quadLength - 2);
+        this.context.fillRect(x + this.context.lineWidth, y + this.context.lineWidth,
+            this.quadLength - this.context.lineWidth * 2, this.quadLength - this.context.lineWidth * 2);
     }
 
     clear() {
@@ -50,6 +51,7 @@ export default class DrawArea {
     }
 
     private drawGrid() {
+        this.context.globalAlpha = 0.8;
         this.context.fillStyle = DrawArea.COLORS[0];
         for (let i: number = 0; i <= DrawArea.QUADS_ON_SIDE; i++) {
             this.context.beginPath();
@@ -62,5 +64,6 @@ export default class DrawArea {
             this.context.lineTo(this.canvas.width(), i * this.quadLength);
             this.context.stroke();
         }
+        this.context.globalAlpha = 1;
     }
 }
