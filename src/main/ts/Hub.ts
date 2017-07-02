@@ -1,6 +1,6 @@
-import * as $ from "jquery";
 import Chat from "./Chat";
-import ContextDrawer from "./ContextDrawer";
+import DrawArea from "./DrawArea";
+import * as $ from "jquery";
 
 enum Role { Idler, Queued, Guesser, Painter, Winner }
 
@@ -11,21 +11,19 @@ export namespace Hub {
     let role: Role;
 
     const inputName = $("#inputName")[0] as HTMLInputElement;
-    const canvas = $("#canvas") as JQuery<HTMLCanvasElement>;
-    const selectColor = $("#selectColor")[0] as HTMLSelectElement;
-
-    const drawer = new ContextDrawer(canvas.width(), canvas[0].getContext("2d"));
+    const drawArea = new DrawArea($("#canvas") as JQuery<HTMLCanvasElement>,
+        $("#selectColor")[0] as HTMLSelectElement);
     const chat = new Chat($("#divChat"));
 
     export function init() {
-        $.getJSON("/api/player/name", (data: any) => inputName.value = data.name);
+        $.getJSON("/api/player/name", (data: { readonly name: string }) => inputName.value = data.name);
         $("#btnQueue").click(onBtnQueueClick);
-        canvas.mousedown(onCanvasMouseDown);
-        canvas.mousemove(onCanvasMouseMoved);
-        canvas.mouseup(onCanvasMouseUp);
-        canvas.mouseout(onCanvasMouseUp);
+        drawArea.canvas.mousedown(onCanvasMouseDown);
+        drawArea.canvas.mousemove(onCanvasMouseMoved);
+        drawArea.canvas.mouseup(onCanvasMouseUp);
+        drawArea.canvas.mouseout(onCanvasMouseUp);
         $("#formMessage").submit(onFormMessageSubmit);
-        $("#btnClear").click(() => $.ajax("/api/lobby/quads", { method: DELETE, success: () => drawer.clear() }));
+        $("#btnClear").click(() => $.ajax("/api/lobby/quads", { method: DELETE, success: () => drawArea.clear() }));
         setInterval(onUpdated, 500);
     }
 
@@ -34,13 +32,13 @@ export namespace Hub {
             if (role != data.roleCode) {
                 role = data.roleCode;
                 if (role == Role.Painter || role == Role.Guesser) {
-                    drawer.clear();
+                    drawArea.clear();
                 }
                 $("#txtStatus").html("Role: " + Role[role]);
                 $("#btnQueue").html(role == Role.Queued ? "Get out of queue" : "Get in queue");
                 ($("#inputMessage")[0] as HTMLInputElement).disabled = role != Role.Guesser;
                 ($("#btnMessage")[0] as HTMLButtonElement).disabled = role != Role.Guesser;
-                selectColor.disabled = role != Role.Painter;
+                drawArea.selectColor.disabled = role != Role.Painter;
                 ($("#btnClear")[0] as HTMLButtonElement).disabled = role != Role.Painter;
             }
             if (role == Role.Guesser) {
@@ -62,20 +60,20 @@ export namespace Hub {
 
     function onCanvasMouseDown() {
         if (role == Role.Painter) {
-            drawer.isMouseDown = true;
+            drawArea.isMouseDown = true;
         }
     }
 
     function onCanvasMouseMoved(e: JQuery.Event): boolean {
-        if (role == Role.Painter && drawer.isMouseDown) {
-            const x: number = e.pageX - canvas.offset().left;
-            const y: number = e.pageY - canvas.offset().top;
-            const quadX: number = x - x % drawer.quadLength;
-            const quadY: number = y - y % drawer.quadLength;
-            const number: number = quadX / drawer.quadLength + quadY / drawer.quadLength * ContextDrawer.QUADS_ON_SIDE;
-            if (!drawer.checkQuadRecorded(number)) {
-                $.post("/api/lobby/quad/" + number, "color=" + selectColor.selectedIndex,
-                    () => drawer.recordQuad(number, quadX, quadY, selectColor.selectedIndex));
+        if (role == Role.Painter && drawArea.isMouseDown) {
+            const x: number = e.pageX - drawArea.canvas.offset().left;
+            const y: number = e.pageY - drawArea.canvas.offset().top;
+            const quadX: number = x - x % drawArea.quadLength;
+            const quadY: number = y - y % drawArea.quadLength;
+            const number: number = quadX / drawArea.quadLength + quadY / drawArea.quadLength * DrawArea.QUADS_ON_SIDE;
+            if (!drawArea.checkQuadRecorded(number)) {
+                $.post("/api/lobby/quad/" + number, "color=" + drawArea.selectColor.selectedIndex,
+                    () => drawArea.recordQuad(number, quadX, quadY));
             }
         }
         return false;
@@ -83,7 +81,7 @@ export namespace Hub {
 
     function onCanvasMouseUp() {
         if (role == Role.Painter) {
-            drawer.isMouseDown = false;
+            drawArea.isMouseDown = false;
         }
     }
 
@@ -92,26 +90,27 @@ export namespace Hub {
         const input = $("#inputMessage")[0] as HTMLInputElement;
         if (input.value.length > 0) {
             $.post("/api/lobby/message", "text=" + input.value, () => {
-                setUpMessage(inputName.value, input.value);
+                chat.addMessage(inputName.value, input.value);
                 chat.scrollBottom();
                 input.value = null;
             });
         }
     }
 
-    function updateGame(
-        data: { quadsRemoved: boolean, quads: { color: number, number: number }[], messages: any[] }) {
+    function updateGame(data: { quadsRemoved: boolean, quads: { readonly color: number, readonly number: number }[],
+        messages: any[] }) {
         if (data.quadsRemoved) {
-            drawer.clear();
+            drawArea.clear();
         }
         for (const quad of data.quads) {
-            drawer.drawQuad(quad.color, quad.number % ContextDrawer.QUADS_ON_SIDE * drawer.quadLength,
-                Math.floor(quad.number / ContextDrawer.QUADS_ON_SIDE) * drawer.quadLength);
+            drawArea.drawQuad(quad.number % DrawArea.QUADS_ON_SIDE * drawArea.quadLength,
+                Math.floor(quad.number / DrawArea.QUADS_ON_SIDE) * drawArea.quadLength, quad.color);
         }
         updateChat(data.messages);
     }
 
-    function updateChat(messages: { number: number, sender: string, text: string, marked: boolean }[]) {
+    function updateChat(messages: { readonly number: number, readonly sender: string,
+        readonly text: string, readonly marked: boolean }[]) {
         if (role == Role.Painter) {
             messages = messages.splice(chat.messagesNumber);
         } else {
@@ -119,24 +118,11 @@ export namespace Hub {
         }
         if (messages.length > 0) {
             for (const message of messages) {
-                setUpMessage(message.sender, message.text, message.number, message.marked);
+                chat.addMessage(message.sender, message.text, message.number, role == Role.Painter, message.marked);
             }
             if (role == Role.Painter) {
                 chat.scrollBottom();
             }
-        }
-    }
-
-    function setUpMessage(sender: string, text: string, number: number = -1, isMarked: boolean = null) {
-        const withRadio: boolean = role == Role.Painter;
-        number = chat.addMessage(number, sender, text, withRadio, isMarked);
-        if (number != -1 && withRadio) {
-            const radioPlus = $('#' + Chat.RADIO_PLUS + number) as JQuery<HTMLInputElement>;
-            radioPlus[0].checked = isMarked == true;
-            radioPlus.click(() => $.post("/api/lobby/mark/" + number, "marked=1"));
-            const radioMinus = $('#' + Chat.RADIO_MINUS + number) as JQuery<HTMLInputElement>;
-            radioMinus[0].checked = isMarked == false;
-            radioMinus.click(() => $.post("/api/lobby/mark/" + number, "marked=0"));
         }
     }
 }

@@ -1,8 +1,10 @@
+import * as $ from "jquery";
+
 export default class Chat {
 
-    static readonly MESSAGE = "message";
-    static readonly RADIO_PLUS = "radioPlus";
-    static readonly RADIO_MINUS = "radioMinus";
+    private static readonly RADIO_PLUS = "radioPlus";
+    private static readonly RADIO_MINUS = "radioMinus";
+    private static readonly MARK = "mark";
 
     private _messagesNumber: number = 0;
 
@@ -16,7 +18,8 @@ export default class Chat {
         this.div.scrollTop(this.div[0].scrollHeight);
     }
 
-    addMessage(number :number, sender: string, text: string, withRadio: boolean, isMarked: boolean = null): number {
+    addMessage(sender: string, text: string, number: number = -1,
+               withRadio: boolean = false, isMarked: boolean = null) {
         if (number == -1) {
             number = this._messagesNumber;
         } else if (number < this._messagesNumber) {
@@ -24,21 +27,30 @@ export default class Chat {
         }
 
         this._messagesNumber++;
-        let message = "<div id='" + Chat.MESSAGE + number + "'><b>" + sender + ":</b> " + text;
+        let messageContent = "<div id='message" + number + "'><b>" + sender + ":</b> " + text;
         if (withRadio) {
-            message += "<br /><label for='" + Chat.RADIO_PLUS + number + "'>+</label><input type='radio' id='radioPlus"
-                + number + "' name='mark" + number + "' /> <label for='" + Chat.RADIO_MINUS + number
-                + "'>-</label><input type='radio' id='radioMinus" + number + "' name='mark"+ number + "' />";
+            messageContent += "<br /><label for='" + Chat.RADIO_PLUS + number
+                + "'>+</label><input type='radio' id='radioPlus" + number + "' /> <label for='" + Chat.RADIO_MINUS
+                + number + "'>-</label><input type='radio' id='radioMinus" + number + "' />";
         } else {
             if (isMarked == true) {
-                message += " <b>+</b>";
+                messageContent += " <b>+</b>";
             } else if (isMarked == false) {
-                message += " <b>-</b>";
+                messageContent += " <b>-</b>";
             }
         }
-        this.div.append(message + "</div><hr />");
+        this.div.append(messageContent + "</div><hr />");
 
-        return number;
+        if (withRadio) {
+            const radioPlus = $('#' + Chat.RADIO_PLUS + number) as JQuery<HTMLInputElement>;
+            radioPlus[0].name = "mark" + number;
+            radioPlus[0].checked = isMarked == true;
+            radioPlus.click(() => $.post("/api/lobby/mark/" + number, "marked=1"));
+            const radioMinus = $('#' + Chat.RADIO_MINUS + number) as JQuery<HTMLInputElement>;
+            radioMinus[0].name = radioPlus[0].name;
+            radioMinus[0].checked = isMarked == false;
+            radioMinus.click(() => $.post("/api/lobby/mark/" + number, "marked=0"));
+        }
     }
 
     clear() {
