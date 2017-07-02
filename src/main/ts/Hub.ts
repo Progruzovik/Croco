@@ -1,5 +1,6 @@
 import Chat from "./Chat";
 import DrawArea from "./DrawArea";
+import Player from "./Player";
 import * as $ from "jquery";
 
 enum Role { Idler, Queued, Guesser, Painter, Winner }
@@ -29,22 +30,26 @@ export namespace Hub {
 
     function onUpdated() {
         $.getJSON("/api/player/role", (data: { roleCode: number }) => {
-            if (role != data.roleCode) {
-                role = data.roleCode;
-                if (role == Role.Painter || role == Role.Guesser) {
-                    drawArea.clear();
+            if (role == Role.Guesser || role == Role.Painter) {
+                $.getJSON("/api/lobby/players", updatePlayers);
+                if (role == Role.Guesser) {
+                    $.getJSON("/api/lobby/game", updateGame);
+                } else if (role == Role.Painter) {
+                    $.getJSON("api/lobby/messages",
+                        (data : { readonly messages: any[] }) => updateChat(data.messages));
                 }
+            }
+            if (role != data.roleCode) {
+                if (role == Role.Painter || role == Role.Guesser) {
+                    $.getJSON("/api/lobby/players", updatePlayers);
+                }
+                role = data.roleCode;
                 $("#txtStatus").html("Role: " + Role[role]);
                 $("#btnQueue").html(role == Role.Queued ? "Get out of queue" : "Get in queue");
                 ($("#inputMessage")[0] as HTMLInputElement).disabled = role != Role.Guesser;
                 ($("#btnMessage")[0] as HTMLButtonElement).disabled = role != Role.Guesser;
                 drawArea.selectColor.disabled = role != Role.Painter;
                 ($("#btnClear")[0] as HTMLButtonElement).disabled = role != Role.Painter;
-            }
-            if (role == Role.Guesser) {
-                $.getJSON("/api/lobby/game", updateGame);
-            } else if (role == Role.Painter) {
-                $.getJSON("api/lobby/messages", (data : { messages: any[] }) => updateChat(data.messages));
             }
         });
     }
@@ -97,8 +102,24 @@ export namespace Hub {
         }
     }
 
-    function updateGame(data: { quadsRemoved: boolean, quads: { readonly color: number, readonly number: number }[],
-        messages: any[] }) {
+    function updatePlayers(data : { readonly painter: Player,
+        readonly guessers: Player[], readonly winner: Player }) {
+        let players = "";
+        if (data.painter) {
+            players += "<b>Painter:</b> " + data.painter.name + "<br />";
+        }
+        players += "<b>Guessers:</b>";
+        for (const guesser of data.guessers) {
+            players += ' ' + guesser.name;
+        }
+        if (data.winner) {
+            players += "<br /><b>Winner:</b> " + data.winner.name;
+        }
+        $("#divPlayers").html(players);
+    }
+
+    function updateGame(data: { readonly quadsRemoved: boolean,
+        readonly quads: { readonly color: number, readonly number: number }[], readonly messages: any[] }) {
         if (data.quadsRemoved) {
             drawArea.clear();
         }
