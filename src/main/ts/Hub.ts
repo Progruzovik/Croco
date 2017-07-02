@@ -68,9 +68,10 @@ export namespace Hub {
         }
     }
 
-    function onCanvasMouseDown() {
+    function onCanvasMouseDown(e: JQuery.Event) {
         if (role == Role.Painter) {
             drawArea.isMouseDown = true;
+            onCanvasMouseMoved(e);
         }
     }
 
