@@ -82,14 +82,9 @@ export namespace Hub {
             const quadX: number = x - x % drawArea.quadLength;
             const quadY: number = y - y % drawArea.quadLength;
             const number: number = quadX / drawArea.quadLength + quadY / drawArea.quadLength * DrawArea.QUADS_ON_SIDE;
-            if (!drawArea.checkQuadRecorded(number)) {
-                if (drawArea.selectColor.selectedIndex == drawArea.selectColor.length - 1) {
-                    $.ajax("/api/lobby/quad/" + number,
-                        { method: DELETE, success: () => drawArea.recordQuad(number, quadX, quadY) });
-                } else {
-                    $.post("/api/lobby/quad/" + number, "color=" + drawArea.selectColor.selectedIndex,
-                        () => drawArea.recordQuad(number, quadX, quadY));
-                }
+            if (drawArea.recordedQuads.indexOf(number) == -1) {
+                drawArea.recordedQuads.push(number);
+                drawArea.drawQuad(quadX, quadY, drawArea.selectColor.selectedIndex);
             }
         }
         return false;
@@ -97,6 +92,15 @@ export namespace Hub {
 
     function onCanvasMouseUp() {
         if (role == Role.Painter) {
+            if (drawArea.selectColor.selectedIndex == drawArea.selectColor.length - 1) {
+                for (const number of drawArea.recordedQuads) {
+                    $.ajax("/api/lobby/quad/" + number, { method: DELETE });
+                }
+            } else {
+                for (const number of drawArea.recordedQuads) {
+                    $.post("/api/lobby/quad/" + number, "color=" + drawArea.selectColor.selectedIndex);
+                }
+            }
             drawArea.isMouseDown = false;
         }
     }

@@ -14,12 +14,12 @@ export default class DrawArea {
         if (this._isMouseDown != value) {
             this._isMouseDown = value;
             if (!this._isMouseDown) {
-                this.recordedQuads.clear();
+                this.recordedQuads.length = 0;
             }
         }
     }
 
-    private readonly recordedQuads = new Set<number>();
+    readonly recordedQuads: number[] = [];
     private readonly context: CanvasRenderingContext2D;
 
     constructor(readonly canvas: JQuery<HTMLCanvasElement>,
@@ -27,15 +27,6 @@ export default class DrawArea {
         this.quadLength = canvas.width() / DrawArea.QUADS_ON_SIDE;
         this.context = canvas[0].getContext("2d");
         this.drawGrid();
-    }
-
-    checkQuadRecorded(number: number): boolean {
-        return this.recordedQuads.has(number);
-    }
-
-    recordQuad(number: number, x: number, y: number) {
-        this.recordedQuads.add(number);
-        this.drawQuad(x, y, this.selectColor.selectedIndex);
     }
 
     drawQuad(x: number, y: number, color: number) {
