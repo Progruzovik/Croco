@@ -157,9 +157,7 @@ export namespace Hub {
             for (const message of messages) {
                 chat.addMessage(message.sender, message.text, message.number, role == Role.Painter, message.marked);
             }
-            if (role == Role.Painter) {
-                chat.scrollBottom();
-            }
+            chat.scrollBottom();
         }
     }
 }
