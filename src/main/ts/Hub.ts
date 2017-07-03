@@ -3,10 +3,9 @@ import DrawArea from "./DrawArea";
 import Player from "./Player";
 import * as $ from "jquery";
 
-enum Role { Idler, Queued, Guesser, Painter, Winner }
-
 export namespace Hub {
 
+    enum Role { Idler, Queued, Guesser, Painter, Winner }
     const DELETE = "delete";
 
     let role: Role;
@@ -29,16 +28,16 @@ export namespace Hub {
     }
 
     function onUpdated() {
-        $.getJSON("/api/player/role", (data: { roleCode: number }) => {
-            if (role == Role.Guesser || role == Role.Painter) {
-                $.getJSON("/api/lobby/players", updatePlayers);
-                if (role == Role.Guesser) {
-                    $.getJSON("/api/lobby/game", updateGame);
-                } else if (role == Role.Painter) {
-                    $.getJSON("api/lobby/messages",
-                        (data : { readonly messages: any[] }) => updateChat(data.messages));
-                }
+        if (role == Role.Guesser || role == Role.Painter) {
+            $.getJSON("/api/lobby/players", updatePlayers);
+            if (role == Role.Guesser) {
+                $.getJSON("/api/lobby/game", updateGame);
+            } else if (role == Role.Painter) {
+                $.getJSON("api/lobby/messages",
+                    (data : { readonly messages: any[] }) => updateChat(data.messages));
             }
+        }
+        $.getJSON("/api/player/role", (data: { roleCode: number }) => {
             if (role != data.roleCode) {
                 role = data.roleCode;
                 if (role == Role.Painter || role == Role.Guesser) {
