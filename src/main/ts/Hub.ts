@@ -40,10 +40,12 @@ export namespace Hub {
         $.getJSON("/api/player/role", (data: { roleCode: number }) => {
             if (role != data.roleCode) {
                 role = data.roleCode;
-                if (role == Role.Painter || role == Role.Guesser) {
+                if (role == Role.Guesser || role == Role.Painter) {
                     chat.clear();
                     $.getJSON("/api/lobby/game", updateGame);
-                    if (role == Role.Painter) {
+                    if (role == Role.Guesser) {
+                        $("#divKeyword").html(null);
+                    } else {
                         $.getJSON("/api/lobby/keyword", (data: { readonly keyword: string }) =>
                             $("#divKeyword").html("<b>Keyword: </b>" + data.keyword));
                     }
