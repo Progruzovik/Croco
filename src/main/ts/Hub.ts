@@ -76,7 +76,8 @@ export namespace Hub {
         }
     }
 
-    function onCanvasMouseMoved(e: JQuery.Event): boolean {
+    function onCanvasMouseMoved(e: JQuery.Event) {
+        e.preventDefault();
         if (role == Role.Painter && drawArea.isMouseDown) {
             const x: number = e.pageX - drawArea.canvas.offset().left;
             const y: number = e.pageY - drawArea.canvas.offset().top;
@@ -88,7 +89,6 @@ export namespace Hub {
                 drawArea.drawQuad(quadX, quadY, drawArea.selectColor.selectedIndex);
             }
         }
-        return false;
     }
 
     function onCanvasMouseUp() {

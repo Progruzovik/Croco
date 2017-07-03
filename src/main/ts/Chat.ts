@@ -20,11 +20,9 @@ export default class Chat {
                withRadio: boolean = false, isMarked: boolean = null) {
         if (number == -1) {
             number = this._messagesNumber;
-        } else if (number < this._messagesNumber) {
-            return -1;
         }
-
         this._messagesNumber++;
+
         let messageContent = "<div id='message" + number + "'><b>" + sender + ":</b> " + text;
         if (withRadio) {
             messageContent += "<br /><label for='" + Chat.RADIO_PLUS + number
