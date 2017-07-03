@@ -34,7 +34,7 @@ export namespace Hub {
                 $.getJSON("/api/lobby/game", updateGame);
             } else if (role == Role.Painter) {
                 $.getJSON("api/lobby/messages",
-                    (data : { readonly messages: any[] }) => updateChat(data.messages));
+                    (data: { readonly messages: any[] }) => updateChat(data.messages));
             }
         }
         $.getJSON("/api/player/role", (data: { roleCode: number }) => {
