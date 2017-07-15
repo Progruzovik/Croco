@@ -5,9 +5,9 @@ export default class Chat {
     private static readonly RADIO_PLUS = "radioPlus";
     private static readonly RADIO_MINUS = "radioMinus";
 
-    private _messagesNumber: number = 0;
-    get messagesNumber(): number {
-        return this._messagesNumber;
+    private _messagesCount: number = 0;
+    get messagesCount(): number {
+        return this._messagesCount;
     }
 
     constructor(private readonly div: JQuery<HTMLElement>) {}
@@ -19,9 +19,9 @@ export default class Chat {
     addMessage(sender: string, text: string, number: number = -1,
                withRadio: boolean = false, isMarked: boolean = null) {
         if (number == -1) {
-            number = this._messagesNumber;
+            number = this._messagesCount;
         }
-        this._messagesNumber++;
+        this._messagesCount++;
 
         let messageContent = "<div id='message" + number + "'><b>" + sender + ":</b> " + text;
         if (withRadio) {
@@ -50,7 +50,7 @@ export default class Chat {
     }
 
     clear() {
-        this._messagesNumber = 0;
+        this._messagesCount = 0;
         this.div.html(null);
     }
 }

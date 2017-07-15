@@ -149,7 +149,7 @@ export namespace Hub {
     function updateChat(messages: { readonly number: number, readonly sender: string,
         readonly text: string, readonly marked: boolean }[]) {
         if (role == Role.Painter) {
-            messages = messages.splice(chat.messagesNumber);
+            messages = messages.splice(chat.messagesCount);
         } else {
             chat.clear();
         }

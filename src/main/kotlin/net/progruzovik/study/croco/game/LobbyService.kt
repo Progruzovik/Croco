@@ -31,9 +31,9 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     private val startTime = LocalTime.now()
 
     companion object {
-        private const val GUESSERS_NUMBER = 5
-        private const val QUADS_NUMBER = 400
-        private const val COLORS_NUMBER = 13
+        private const val GUESSERS_COUNT = 5
+        private const val QUADS_COUNT = 400
+        private const val COLORS_COUNT = 13
     }
 
     init {
@@ -43,7 +43,7 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     }
 
     override fun addGuesser(guesser: Player): Boolean {
-        if (painter != guesser && !guessers.contains(guesser) && guessers.size < GUESSERS_NUMBER
+        if (painter != guesser && !guessers.contains(guesser) && guessers.size < GUESSERS_COUNT
                 && isRunning && abs(between(startTime, LocalTime.now()).toMinutes()) < 1) {
             guesser.role = Role.GUESSER
             guesser.isQuadsRemoved = true
@@ -55,8 +55,8 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     }
 
     override fun addQuad(player: Player, number: Int, color: Int): Boolean {
-        if (player == painter && isRunning && number > -1 && number < QUADS_NUMBER
-                && color > -1 && color < COLORS_NUMBER) {
+        if (player == painter && isRunning && number > -1 && number < QUADS_COUNT
+                && color > -1 && color < COLORS_COUNT) {
             val existingQuad: Quad? = quads.find { it.number == number }
             if (existingQuad == null) {
                 quads.add(Quad(number, color))
@@ -69,7 +69,7 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     }
 
     override fun removeQuad(player: Player, number: Int): Boolean {
-        if (player == painter && isRunning && number > -1 && number < QUADS_NUMBER) {
+        if (player == painter && isRunning && number > -1 && number < QUADS_COUNT) {
             quads.removeIf { it.number == number }
             painter?.isQuadsRemoved = true
             guessers.forEach { it.isQuadsRemoved = true }
