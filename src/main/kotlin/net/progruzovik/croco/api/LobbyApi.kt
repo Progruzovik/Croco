@@ -1,8 +1,8 @@
-package net.progruzovik.study.croco.api
+package net.progruzovik.croco.api
 
-import net.progruzovik.study.croco.game.Lobby
-import net.progruzovik.study.croco.game.Player
-import net.progruzovik.study.croco.getLogger
+import net.progruzovik.croco.game.Lobby
+import net.progruzovik.croco.game.Player
+import net.progruzovik.croco.getLogger
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse

@@ -1,7 +1,7 @@
-package net.progruzovik.study.croco.game
+package net.progruzovik.croco.game
 
-import net.progruzovik.study.croco.data.Message
-import net.progruzovik.study.croco.data.Quad
+import net.progruzovik.croco.data.Message
+import net.progruzovik.croco.data.Quad
 
 interface Lobby {
 

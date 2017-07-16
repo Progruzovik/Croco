@@ -1,4 +1,4 @@
-package net.progruzovik.study.croco
+package net.progruzovik.croco
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

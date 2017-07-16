@@ -1,4 +1,4 @@
-package net.progruzovik.study.croco.data
+package net.progruzovik.croco.data
 
 enum class Role {
     IDLER, QUEUED, GUESSER, PAINTER, WINNER

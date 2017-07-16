@@ -1,4 +1,4 @@
-package net.progruzovik.study.croco.dao
+package net.progruzovik.croco.dao
 
 interface KeywordDao {
 

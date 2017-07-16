@@ -1,10 +1,10 @@
 @file:Suppress("SpringKotlinAutowiredMembers")
 
-package net.progruzovik.study.croco.api
+package net.progruzovik.croco.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import junit.framework.TestCase.assertEquals
-import net.progruzovik.study.croco.data.Role
+import net.progruzovik.croco.data.Role
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired

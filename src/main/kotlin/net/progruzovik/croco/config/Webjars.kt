@@ -1,4 +1,4 @@
-package net.progruzovik.study.croco.config
+package net.progruzovik.croco.config
 
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping

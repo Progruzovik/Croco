@@ -1,4 +1,4 @@
-package net.progruzovik.study.croco.data
+package net.progruzovik.croco.data
 
 data class Message(
         val number: Int, val sender: String, val text: String) {

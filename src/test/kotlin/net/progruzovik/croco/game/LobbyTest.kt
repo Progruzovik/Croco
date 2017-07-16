@@ -1,7 +1,7 @@
-package net.progruzovik.study.croco.game
+package net.progruzovik.croco.game
 
 import junit.framework.TestCase.*
-import net.progruzovik.study.croco.data.Role
+import net.progruzovik.croco.data.Role
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

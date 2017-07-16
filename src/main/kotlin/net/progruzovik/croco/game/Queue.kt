@@ -1,4 +1,4 @@
-package net.progruzovik.study.croco.game
+package net.progruzovik.croco.game
 
 interface Queue {
 

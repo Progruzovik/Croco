@@ -1,8 +1,8 @@
-package net.progruzovik.study.croco.game
+package net.progruzovik.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import net.progruzovik.study.croco.data.Role
-import net.progruzovik.study.croco.getLogger
+import net.progruzovik.croco.data.Role
+import net.progruzovik.croco.getLogger
 import org.springframework.context.annotation.Scope
 import org.springframework.context.annotation.ScopedProxyMode
 import org.springframework.stereotype.Component

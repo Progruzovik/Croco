@@ -1,6 +1,6 @@
-package net.progruzovik.study.croco.game
+package net.progruzovik.croco.game
 
-import net.progruzovik.study.croco.data.Role
+import net.progruzovik.croco.data.Role
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Service
 

@@ -1,4 +1,4 @@
-package net.progruzovik.study.croco.dao
+package net.progruzovik.croco.dao
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository

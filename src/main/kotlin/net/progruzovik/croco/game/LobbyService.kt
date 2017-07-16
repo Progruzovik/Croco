@@ -1,10 +1,10 @@
-package net.progruzovik.study.croco.game
+package net.progruzovik.croco.game
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import net.progruzovik.study.croco.dao.KeywordDao
-import net.progruzovik.study.croco.data.Message
-import net.progruzovik.study.croco.data.Quad
-import net.progruzovik.study.croco.data.Role
+import net.progruzovik.croco.dao.KeywordDao
+import net.progruzovik.croco.data.Message
+import net.progruzovik.croco.data.Quad
+import net.progruzovik.croco.data.Role
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Service
 import java.lang.Math.abs
