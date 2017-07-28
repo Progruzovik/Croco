@@ -6,27 +6,29 @@ export default class DrawArea {
 
     readonly quadLength: number;
 
-    private _isMouseDown: boolean = false;
-    get isMouseDown(): boolean {
-        return this._isMouseDown;
-    }
-    set isMouseDown(value: boolean) {
-        if (this._isMouseDown != value) {
-            this._isMouseDown = value;
-            if (!this._isMouseDown) {
-                this.recordedQuads.length = 0;
-            }
-        }
-    }
+    private isMouseDown: boolean = false;
 
     readonly recordedQuads: number[] = [];
     private readonly context: CanvasRenderingContext2D;
 
-    constructor(readonly canvas: JQuery<HTMLCanvasElement>,
+    constructor(readonly canvas: HTMLCanvasElement,
                 readonly selectColor: HTMLSelectElement) {
-        this.quadLength = canvas.width() / DrawArea.QUADS_ON_SIDE;
-        this.context = canvas[0].getContext("2d");
+        this.quadLength = canvas.width / DrawArea.QUADS_ON_SIDE;
+        this.context = canvas.getContext("2d");
         this.drawGrid();
+    }
+
+    checkMouseDown(): boolean {
+        return this.isMouseDown;
+    }
+
+    setMouseDown(value: boolean) {
+        if (this.isMouseDown != value) {
+            this.isMouseDown = value;
+            if (!this.isMouseDown) {
+                this.recordedQuads.length = 0;
+            }
+        }
     }
 
     drawQuad(x: number, y: number, color: number) {
@@ -36,7 +38,7 @@ export default class DrawArea {
     }
 
     clear() {
-        this.context.clearRect(0, 0, this.canvas.width(), this.canvas.width());
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.width);
         this.drawGrid();
     }
 
@@ -46,12 +48,12 @@ export default class DrawArea {
         for (let i: number = 0; i <= DrawArea.QUADS_ON_SIDE; i++) {
             this.context.beginPath();
             this.context.moveTo(i * this.quadLength, 0);
-            this.context.lineTo(i * this.quadLength, this.canvas.width());
+            this.context.lineTo(i * this.quadLength, this.canvas.height);
             this.context.stroke();
 
             this.context.beginPath();
             this.context.moveTo(0, i * this.quadLength);
-            this.context.lineTo(this.canvas.width(), i * this.quadLength);
+            this.context.lineTo(this.canvas.width, i * this.quadLength);
             this.context.stroke();
         }
         this.context.globalAlpha = 1;

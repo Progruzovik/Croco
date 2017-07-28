@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib" : ["ES2015", "DOM.Iterable"],
     "module": "amd",
-    "removeComments": true,
+    "moduleResolution": "node",
     "outFile": "../resources/static/js/app.js"
   }
 }

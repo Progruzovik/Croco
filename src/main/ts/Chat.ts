@@ -1,27 +1,28 @@
-import * as $ from "jquery";
+import axios from "axios";
 
 export default class Chat {
 
     private static readonly RADIO_PLUS = "radioPlus";
     private static readonly RADIO_MINUS = "radioMinus";
 
-    private _messagesCount: number = 0;
-    get messagesCount(): number {
-        return this._messagesCount;
+    private messagesCount: number = 0;
+
+    constructor(private readonly div: HTMLElement) {}
+
+    getMessagesCount(): number {
+        return this.messagesCount;
     }
 
-    constructor(private readonly div: JQuery<HTMLElement>) {}
-
     scrollBottom() {
-        this.div.scrollTop(this.div[0].scrollHeight);
+        this.div.scrollTop = this.div.scrollHeight;
     }
 
     addMessage(sender: string, text: string, number: number = -1,
                withRadio: boolean = false, isMarked: boolean = null) {
         if (number == -1) {
-            number = this._messagesCount;
+            number = this.messagesCount;
         }
-        this._messagesCount++;
+        this.messagesCount++;
 
         let messageContent = "<div id='message" + number + "'><b>" + sender + ":</b> " + text;
         if (withRadio) {
@@ -35,22 +36,22 @@ export default class Chat {
                 messageContent += " <b>-</b>";
             }
         }
-        this.div.append(messageContent + "</div><hr />");
+        this.div.innerHTML += messageContent + "</div><hr />";
 
         if (withRadio) {
-            const radioPlus = $('#' + Chat.RADIO_PLUS + number) as JQuery<HTMLInputElement>;
-            radioPlus[0].name = "mark" + number;
-            radioPlus[0].checked = isMarked == true;
-            radioPlus.click(() => $.post("/api/lobby/mark/" + number, "marked=1"));
-            const radioMinus = $('#' + Chat.RADIO_MINUS + number) as JQuery<HTMLInputElement>;
-            radioMinus[0].name = radioPlus[0].name;
-            radioMinus[0].checked = isMarked == false;
-            radioMinus.click(() => $.post("/api/lobby/mark/" + number, "marked=0"));
+            const radioPlus = document.getElementById(Chat.RADIO_PLUS + number) as HTMLInputElement;
+            radioPlus.name = "mark" + number;
+            radioPlus.checked = isMarked == true;
+            radioPlus.onclick = () => axios.post("/api/lobby/mark/" + number, "marked=1");
+            const radioMinus = document.getElementById(Chat.RADIO_MINUS + number) as HTMLInputElement;
+            radioMinus.name = radioPlus.name;
+            radioMinus.checked = isMarked == false;
+            radioMinus.onclick = () => axios.post("/api/lobby/mark/" + number, "marked=0");
         }
     }
 
     clear() {
-        this._messagesCount = 0;
-        this.div.html(null);
+        this.messagesCount = 0;
+        this.div.innerHTML = null;
     }
 }

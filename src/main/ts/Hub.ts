@@ -1,88 +1,86 @@
 import Chat from "./Chat";
 import DrawArea from "./DrawArea";
-import Player from "./Player";
-import * as $ from "jquery";
+import {default as axios, AxiosResponse} from "axios";
 
 export namespace Hub {
 
     enum Role { Idler, Queued, Guesser, Painter, Winner }
-    const DELETE = "delete";
 
     let role: Role;
 
-    const inputName = $("#inputName")[0] as HTMLInputElement;
-    const drawArea = new DrawArea($("#canvas") as JQuery<HTMLCanvasElement>,
-        $("#selectColor")[0] as HTMLSelectElement);
-    const chat = new Chat($("#divChat"));
+    const inputName = document.getElementById("inputName") as HTMLInputElement;
+    const drawArea = new DrawArea(document.getElementById("canvas") as HTMLCanvasElement,
+        document.getElementById("selectColor") as HTMLSelectElement);
+    const chat = new Chat(document.getElementById("divChat"));
 
     export function init() {
-        $.getJSON("/api/player/name", (data: { readonly name: string }) => inputName.value = data.name);
-        $("#btnQueue").click(onBtnQueueClick);
-        drawArea.canvas.mousedown(onCanvasMouseDown);
-        drawArea.canvas.mousemove(onCanvasMouseMoved);
-        drawArea.canvas.mouseup(onCanvasMouseUp);
-        drawArea.canvas.mouseout(onCanvasMouseUp);
-        $("#formMessage").submit(onFormMessageSubmit);
-        $("#btnClear").click(() => $.ajax("/api/lobby/quads", { method: DELETE, success: () => drawArea.clear() }));
+        axios.get("/api/player/name").then((response: AxiosResponse) => inputName.value = response.data.name);
+        document.getElementById("btnQueue").onclick = onBtnQueueClick;
+        drawArea.canvas.onmousedown = onCanvasMouseDown;
+        drawArea.canvas.onmousemove = onCanvasMouseMoved;
+        drawArea.canvas.onmouseup = onCanvasMouseUp;
+        drawArea.canvas.onmouseout = onCanvasMouseUp;
+        document.getElementById("formMessage").onsubmit = onFormMessageSubmit;
+        document.getElementById("btnClear").onclick
+            = () => axios.delete("/api/lobby/quads").then((response: AxiosResponse) => drawArea.clear());
         setInterval(onUpdated, 500);
     }
 
     function onUpdated() {
         if (role == Role.Guesser || role == Role.Painter) {
-            $.getJSON("/api/lobby/players", updatePlayers);
+            axios.get("/api/lobby/players").then(updatePlayers);
             if (role == Role.Guesser) {
-                $.getJSON("/api/lobby/game", updateGame);
+                axios.get("/api/lobby/game").then(updateGame);
             } else if (role == Role.Painter) {
-                $.getJSON("api/lobby/messages",
-                    (data: { readonly messages: any[] }) => updateChat(data.messages));
+                axios.get("api/lobby/messages").then((response: AxiosResponse) => updateChat(response.data.messages));
             }
         }
-        $.getJSON("/api/player/role", (data: { roleCode: number }) => {
-            if (role != data.roleCode) {
-                role = data.roleCode;
+        axios.get("/api/player/role").then((response: AxiosResponse) => {
+            if (role != response.data.roleCode) {
+                role = response.data.roleCode;
                 if (role == Role.Guesser || role == Role.Painter) {
                     chat.clear();
-                    $.getJSON("/api/lobby/game", updateGame);
+                    axios.get("/api/lobby/game", updateGame);
                     if (role == Role.Guesser) {
-                        $("#divKeyword").html(null);
+                        document.getElementById("divKeyword").innerHTML = null;
                     } else {
-                        $.getJSON("/api/lobby/keyword", (data: { readonly keyword: string }) =>
-                            $("#divKeyword").html("<b>Keyword: </b>" + data.keyword));
+                        axios.get("/api/lobby/keyword").then(
+                            (response: AxiosResponse) => document.getElementById("divKeyword").innerHTML
+                                = "<b>Keyword: </b>" + response.data.keyword);
                     }
                 }
-                $("#txtStatus").html("Role: " + Role[role]);
-                $("#btnQueue").html(role == Role.Queued ? "Get out of queue" : "Get in queue");
-                ($("#inputMessage")[0] as HTMLInputElement).disabled = role != Role.Guesser;
-                ($("#btnMessage")[0] as HTMLButtonElement).disabled = role != Role.Guesser;
+                document.getElementById("txtStatus").innerHTML = "Role: " + Role[role];
+                document.getElementById("btnQueue").innerHTML
+                    = role == Role.Queued ? "Get out of queue" : "Get in queue";
+                (document.getElementById("inputMessage") as HTMLInputElement).disabled = role != Role.Guesser;
+                (document.getElementById("btnMessage") as HTMLButtonElement).disabled = role != Role.Guesser;
                 drawArea.selectColor.disabled = role != Role.Painter;
-                ($("#btnClear")[0] as HTMLButtonElement).disabled = role != Role.Painter;
+                (document.getElementById("btnClear") as HTMLButtonElement).disabled = role != Role.Painter;
             }
         });
     }
 
     function onBtnQueueClick() {
         if (role == Role.Queued) {
-            $.ajax("/api/player/queue", { method: DELETE });
+            axios.delete("/api/player/queue");
         } else {
-            $.post("/api/player/name", "value=" + inputName.value);
-            $.post("/api/player/queue");
+            axios.post("/api/player/name", "value=" + inputName.value);
+            axios.post("/api/player/queue");
         }
     }
 
-    function onCanvasMouseDown(e: JQuery.Event) {
+    function onCanvasMouseDown(e: MouseEvent) {
         if (role == Role.Painter) {
-            drawArea.isMouseDown = true;
+            drawArea.setMouseDown(true);
             onCanvasMouseMoved(e);
         }
     }
 
-    function onCanvasMouseMoved(e: JQuery.Event) {
+    function onCanvasMouseMoved(e: MouseEvent) {
         e.preventDefault();
-        if (role == Role.Painter && drawArea.isMouseDown) {
-            const x: number = e.pageX - drawArea.canvas.offset().left;
-            const y: number = e.pageY - drawArea.canvas.offset().top;
-            const quadX: number = x - x % drawArea.quadLength;
-            const quadY: number = y - y % drawArea.quadLength;
+        if (role == Role.Painter && drawArea.checkMouseDown()) {
+            const quadX: number = e.offsetX - e.offsetX % drawArea.quadLength;
+            const quadY: number = e.offsetY - e.offsetY % drawArea.quadLength;
             const number: number = quadX / drawArea.quadLength + quadY / drawArea.quadLength * DrawArea.QUADS_ON_SIDE;
             if (drawArea.recordedQuads.indexOf(number) == -1) {
                 drawArea.recordedQuads.push(number);
@@ -95,22 +93,22 @@ export namespace Hub {
         if (role == Role.Painter) {
             if (drawArea.selectColor.selectedIndex == drawArea.selectColor.length - 1) {
                 for (const number of drawArea.recordedQuads) {
-                    $.ajax("/api/lobby/quad/" + number, { method: DELETE });
+                    axios.delete("/api/lobby/quad/" + number);
                 }
             } else {
                 for (const number of drawArea.recordedQuads) {
-                    $.post("/api/lobby/quad/" + number, "color=" + drawArea.selectColor.selectedIndex);
+                    axios.post("/api/lobby/quad/" + number, "color=" + drawArea.selectColor.selectedIndex);
                 }
             }
-            drawArea.isMouseDown = false;
+            drawArea.setMouseDown(false);
         }
     }
 
-    function onFormMessageSubmit(e: JQuery.Event) {
+    function onFormMessageSubmit(e: MouseEvent) {
         e.preventDefault();
-        const input = $("#inputMessage")[0] as HTMLInputElement;
+        const input = document.getElementById("inputMessage") as HTMLInputElement;
         if (input.value.length > 0) {
-            $.post("/api/lobby/message", "text=" + input.value, () => {
+            axios.post("/api/lobby/message", "text=" + input.value).then(() => {
                 chat.addMessage(inputName.value, input.value);
                 chat.scrollBottom();
                 input.value = null;
@@ -118,44 +116,42 @@ export namespace Hub {
         }
     }
 
-    function updatePlayers(data : { readonly painter: Player,
-        readonly guessers: Player[], readonly winner: Player }) {
+    function updatePlayers(response: AxiosResponse) {
         let players = "";
-        if (data.painter) {
-            players += "<b>Painter:</b> " + data.painter.name + "<br />";
+        if (response.data.painter) {
+            players += "<b>Painter:</b> " + response.data.painter.name + "<br />";
         }
         players += "<b>Guessers:</b>";
-        for (const guesser of data.guessers) {
+        for (const guesser of response.data.guessers) {
             players += ' ' + guesser.name;
         }
-        if (data.winner) {
-            players += "<br /><b>Winner:</b> " + data.winner.name;
+        if (response.data.winner) {
+            players += "<br /><b>Winner:</b> " + response.data.winner.name;
         }
-        $("#divPlayers").html(players);
+        document.getElementById("divPlayers").innerHTML = players;
     }
 
-    function updateGame(data: { readonly quadsRemoved: boolean,
-        readonly quads: { readonly color: number, readonly number: number }[], readonly messages: any[] }) {
-        if (data.quadsRemoved) {
+    function updateGame(response: AxiosResponse) {
+        if (response.data.quadsRemoved) {
             drawArea.clear();
         }
-        for (const quad of data.quads) {
+        for (const quad of response.data.quads) {
             drawArea.drawQuad(quad.number % DrawArea.QUADS_ON_SIDE * drawArea.quadLength,
                 Math.floor(quad.number / DrawArea.QUADS_ON_SIDE) * drawArea.quadLength, quad.color);
         }
-        updateChat(data.messages);
+        updateChat(response.data.messages);
     }
 
-    function updateChat(messages: { readonly number: number, readonly sender: string,
-        readonly text: string, readonly marked: boolean }[]) {
+    function updateChat(messages: any[]) {
         if (role == Role.Painter) {
-            messages = messages.splice(chat.messagesCount);
+            messages = messages.splice(chat.getMessagesCount());
         } else {
             chat.clear();
         }
         if (messages.length > 0) {
             for (const message of messages) {
-                chat.addMessage(message.sender, message.text, message.number, role == Role.Painter, message.marked);
+                chat.addMessage(message.sender, message.text, message.number,
+                    role == Role.Painter, message.marked);
             }
             chat.scrollBottom();
         }
