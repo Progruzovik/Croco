@@ -12,7 +12,7 @@ class QueueService(private val lobbyFactory: ObjectFactory<Lobby>) : Queue {
 
     private var lastLobby: Lobby? = null
 
-    override fun addPlayer(player: Player): Boolean {
+    @Synchronized override fun addPlayer(player: Player): Boolean {
         if (queuedPlayer == player) return false
         if (lastLobby?.addGuesser(player) != true) {
             if (queuedPlayer == null) {
@@ -29,7 +29,7 @@ class QueueService(private val lobbyFactory: ObjectFactory<Lobby>) : Queue {
         return true
     }
 
-    override fun removePlayer(player: Player): Boolean {
+    @Synchronized override fun removePlayer(player: Player): Boolean {
         if (queuedPlayer == player) {
             queuedPlayer = null
             player.role = Role.IDLER

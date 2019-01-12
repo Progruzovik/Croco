@@ -91,7 +91,7 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
         return false
     }
 
-    override fun addMessage(player: Player, text: String): Boolean {
+    @Synchronized override fun addMessage(player: Player, text: String): Boolean {
         if (guessers.contains(player) && isRunning) {
             messages.add(Message(messages.size, player.name, text))
             if (text.toLowerCase().replace('ё', 'е') == keyword) {
