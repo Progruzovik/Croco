@@ -1,6 +1,6 @@
 @file:Suppress("SpringKotlinAutowiredMembers")
 
-package net.progruzovik.croco.api
+package net.progruzovik.croco.rest
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import junit.framework.TestCase.assertEquals
@@ -18,13 +18,13 @@ import org.springframework.test.context.junit4.SpringRunner
 @RunWith(SpringRunner::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class PlayerApiTest {
+class PlayerRestTest {
 
     @Autowired lateinit var restTemplate: TestRestTemplate
 
     @Test fun getRole() {
         val result: ResponseEntity<String> = restTemplate.getForEntity("/api/player/role", String::class.java)
         assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(ObjectMapper().writeValueAsString(hashMapOf("roleCode".to(Role.IDLER.ordinal))), result.body)
+        assertEquals(ObjectMapper().writeValueAsString(hashMapOf("roleCode" to Role.IDLER.ordinal)), result.body)
     }
 }

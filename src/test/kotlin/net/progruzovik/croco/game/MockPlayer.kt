@@ -2,9 +2,7 @@ package net.progruzovik.croco.game
 
 import net.progruzovik.croco.data.Role
 
-class MockPlayer(
-        override val id: String,
-        override var name: String) : Player {
+class MockPlayer(override val id: String, override var name: String) : Player {
 
     override var role: Role = Role.IDLER
     override var lobby: Lobby? = null

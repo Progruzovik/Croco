@@ -11,8 +11,7 @@ import javax.servlet.http.HttpSession
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.INTERFACES)
-open class SessionPlayer(session: HttpSession,
-                         private val queueService: QueueService) : Player {
+open class SessionPlayer(session: HttpSession, private val queueService: QueueService) : Player {
 
     override val id: String = session.id
     override var name: String = "Guest"
@@ -22,11 +21,11 @@ open class SessionPlayer(session: HttpSession,
     @JsonIgnore override var isQuadsRemoved: Boolean = true
 
     companion object {
-        private val logger = getLogger<SessionPlayer>()
+        private val log = getLogger<SessionPlayer>()
     }
 
     init {
-        logger.debug("Player with id = ${session.id} arrived")
+        log.debug("Player with id = ${session.id} arrived")
     }
 
     @PreDestroy fun clear() {
@@ -35,7 +34,7 @@ open class SessionPlayer(session: HttpSession,
         } else if (role == Role.PAINTER) {
             lobby?.close(this)
         }
-        logger.debug("Player with id = $id gone")
+        log.debug("Player with id = $id gone")
     }
 
     override fun addToQueue(): Boolean {

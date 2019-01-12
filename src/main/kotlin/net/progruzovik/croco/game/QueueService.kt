@@ -5,8 +5,7 @@ import org.springframework.beans.factory.ObjectFactory
 import org.springframework.stereotype.Service
 
 @Service
-class QueueService(
-        private val lobbyFactory: ObjectFactory<Lobby>) : Queue {
+class QueueService(private val lobbyFactory: ObjectFactory<Lobby>) : Queue {
 
     override var queuedPlayer: Player? = null
         private set
@@ -14,22 +13,20 @@ class QueueService(
     private var lastLobby: Lobby? = null
 
     override fun addPlayer(player: Player): Boolean {
-        if (queuedPlayer != player) {
-            if (lastLobby?.addGuesser(player) != true) {
-                if (queuedPlayer == null) {
-                    queuedPlayer = player
-                    lastLobby = null
-                    player.role = Role.QUEUED
-                } else {
-                    val lobby: Lobby = lobbyFactory.`object`
-                    lobby.addGuesser(player)
-                    queuedPlayer = null
-                    lastLobby = lobby
-                }
+        if (queuedPlayer == player) return false
+        if (lastLobby?.addGuesser(player) != true) {
+            if (queuedPlayer == null) {
+                queuedPlayer = player
+                lastLobby = null
+                player.role = Role.QUEUED
+            } else {
+                val lobby: Lobby = lobbyFactory.`object`
+                lobby.addGuesser(player)
+                queuedPlayer = null
+                lastLobby = lobby
             }
-            return true
         }
-        return false
+        return true
     }
 
     override fun removePlayer(player: Player): Boolean {

@@ -16,16 +16,16 @@ import java.util.*
 @Scope("prototype")
 class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
 
-    override var painter: Player? = queueService.queuedPlayer
+    override val painter: Player = queueService.queuedPlayer!!
     override val guessers = ArrayList<Player>()
+
     override var winner: Player? = null
         private set
 
     @JsonIgnore override val quads = LinkedList<Quad>()
     @JsonIgnore override val messages = ArrayList<Message>()
 
-    private val isRunning: Boolean
-        get() = painter != null && winner == null
+    private var isRunning = true
 
     private val keyword: String = keywordDao.getRandomKeyword()
     private val startTime = LocalTime.now()
@@ -37,14 +37,15 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     }
 
     init {
-        painter?.role = Role.PAINTER
-        painter?.isQuadsRemoved = true
-        painter?.lobby = this
+        painter.role = Role.PAINTER
+        painter.isQuadsRemoved = true
+        painter.lobby = this
     }
 
     override fun addGuesser(guesser: Player): Boolean {
         if (painter != guesser && !guessers.contains(guesser) && guessers.size < GUESSERS_COUNT
-                && isRunning && abs(between(startTime, LocalTime.now()).toMinutes()) < 1) {
+            && isRunning && abs(between(startTime, LocalTime.now()).toMinutes()) < 1
+        ) {
             guesser.role = Role.GUESSER
             guesser.isQuadsRemoved = true
             guesser.lobby = this
@@ -55,8 +56,10 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     }
 
     override fun addQuad(player: Player, number: Int, color: Int): Boolean {
-        if (player == painter && isRunning && number > -1 && number < QUADS_COUNT
-                && color > -1 && color < COLORS_COUNT) {
+        if (player == painter && isRunning
+            && number > -1 && number < QUADS_COUNT
+            && color > -1 && color < COLORS_COUNT
+        ) {
             val existingQuad: Quad? = quads.find { it.number == number }
             if (existingQuad == null) {
                 quads.add(Quad(number, color))
@@ -71,7 +74,7 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     override fun removeQuad(player: Player, number: Int): Boolean {
         if (player == painter && isRunning && number > -1 && number < QUADS_COUNT) {
             quads.removeIf { it.number == number }
-            painter?.isQuadsRemoved = true
+            painter.isQuadsRemoved = true
             guessers.forEach { it.isQuadsRemoved = true }
             return true
         }
@@ -81,7 +84,7 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
     override fun removeQuads(player: Player): Boolean {
         if (player == painter && isRunning) {
             quads.clear()
-            painter?.isQuadsRemoved = true
+            painter.isQuadsRemoved = true
             guessers.forEach { it.isQuadsRemoved = true }
             return true
         }
@@ -92,11 +95,10 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
         if (guessers.contains(player) && isRunning) {
             messages.add(Message(messages.size, player.name, text))
             if (text.toLowerCase().replace('ё', 'е') == keyword) {
-                painter?.role = Role.IDLER
-                guessers.forEach {
-                    it.role = if (it == player) Role.WINNER else Role.IDLER
-                }
+                painter.role = Role.IDLER
+                guessers.forEach { it.role = if (it == player) Role.WINNER else Role.IDLER }
                 winner = player
+                isRunning = false
             }
             return true
         }
@@ -111,15 +113,13 @@ class LobbyService(queueService: QueueService, keywordDao: KeywordDao) : Lobby {
         return false
     }
 
-    override fun requestKeyword(player: Player): String? {
-        return if (player == painter || !isRunning) keyword else null
-    }
+    override fun requestKeyword(player: Player): String? = if (player == painter || !isRunning) keyword else null
 
     override fun close(player: Player) {
         if (player == painter && isRunning) {
-            painter?.role = Role.IDLER
-            painter = null
+            painter.role = Role.IDLER
             guessers.forEach { it.role = Role.IDLER }
+            isRunning = false
         }
     }
 }

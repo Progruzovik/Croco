@@ -3,7 +3,7 @@ package net.progruzovik.croco.dao
 interface KeywordDao {
 
     /**
-     * @return случайное ключевое слово.
+     * @return Случайное ключевое слово
      */
     fun getRandomKeyword(): String
 }
